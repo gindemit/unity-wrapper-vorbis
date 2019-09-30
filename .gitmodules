@@ -1,0 +1,6 @@
+[submodule "dependency/vorbis"]
+	path = dependency/vorbis
+	url = https://github.com/xiph/vorbis.git
+[submodule "dependency/ogg"]
+	path = dependency/ogg
+	url = https://github.com/xiph/ogg.git
