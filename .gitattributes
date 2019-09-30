@@ -1,1 +1,2 @@
 *.md filter=lfs diff=lfs merge=lfs -text
+*.gitmodules filter=lfs diff=lfs merge=lfs -text
