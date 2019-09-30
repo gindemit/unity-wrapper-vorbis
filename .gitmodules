@@ -4,3 +4,6 @@
 [submodule "dependency/ogg"]
 	path = dependency/ogg
 	url = https://github.com/xiph/ogg.git
+[submodule "unity/unity-project-vorbis"]
+	path = unity/unity-project-vorbis
+	url = https://github.com/khindemit/unity-project-vorbis.git
