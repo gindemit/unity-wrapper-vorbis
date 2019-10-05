@@ -178,7 +178,7 @@ int main() {
 
     while (!eos) {
         long i;
-        long bytes = fread(readbuffer, 1, READ * 2, stdin); /* stereo hardwired here */
+        long bytes = fread(readbuffer, 1, READ * 2, stdin); /* mono hardwired here */
 
         if (bytes == 0) {
             /* end of file.  this can be done implicitly in the mainline,
