@@ -4,4 +4,10 @@
 #define EXPORT_API // XCode does not need annotating exported functions, so define is empty
 #endif
 
-long EXPORT_API EncodePcmDataToFile(const float* samples, const long samplesLength, const short channels, const long frequency, const float base_quality, const char* filePath);
+long EXPORT_API EncodePcmDataToFile(
+    const char* filePath,
+    const float* samples,
+    const long samplesLength,
+    const short channels,
+    const long frequency,
+    const float base_quality);
