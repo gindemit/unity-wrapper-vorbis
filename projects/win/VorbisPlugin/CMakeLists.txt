@@ -21,6 +21,7 @@ add_library (VorbisPlugin SHARED
     #../../../src/encoder.c
     #../../../src/PluginTest.c
     ../../../src/VorbisPluginEncoder.c
+    ../../../src/VorbisPluginDecoder.c
 )
 
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/vorbis.lib)
