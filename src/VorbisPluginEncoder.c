@@ -5,9 +5,11 @@
 #include <math.h>
 #include <vorbis/vorbisenc.h>
 
+#include "VorbisPluginEncoder.h"
+
 #define READ 1024
 
-long EncodePcmDataToFile(float* samples, long samplesLength, short channels, long frequency, float base_quality, const char* filePath) {
+long EncodePcmDataToFile(const float* samples, const long samplesLength, const short channels, const long frequency, const float base_quality, const char* filePath) {
 
     if (samples == NULL) {
         return 1;
@@ -37,9 +39,6 @@ long EncodePcmDataToFile(float* samples, long samplesLength, short channels, lon
 
     vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
     vorbis_block     vb; /* local working space for packet->PCM decode */
-
-    int eos = 0;
-    int i;
 
     vorbis_info_init(&vi);
 
@@ -78,7 +77,14 @@ long EncodePcmDataToFile(float* samples, long samplesLength, short channels, lon
        mode that libVorbis does not support (eg, too low a bitrate, etc,
        will return 'OV_EIMPL') */
 
-    if (ret)exit(1);
+    if (ret) {
+        return ret;
+    }
+    /* Open file stream to write in */
+    FILE* file_stream = fopen(filePath, "wb");
+    if (file_stream == NULL) {
+        return 7;
+    }
 
     /* add a comment */
     vorbis_comment_init(&vc);
@@ -93,9 +99,6 @@ long EncodePcmDataToFile(float* samples, long samplesLength, short channels, lon
        chained streams just by concatenation */
     srand(time(NULL));
     ogg_stream_init(&os, rand());
-
-    /* Open file stream to write in */
-    FILE* file_stream = fopen(filePath, "w");
 
     /* Vorbis streams begin with three headers; the initial header (with
        most of the codec setup parameters) which is mandated by the Ogg
@@ -126,33 +129,34 @@ long EncodePcmDataToFile(float* samples, long samplesLength, short channels, lon
 
     }
 
+    float test[44100];
+    memset(test, 2, sizeof(float) * 44100);
+    long k = 0;
 
-    for (long j = 0; j < samplesLength && !eos; j = j + READ) {
-
-        if (j >= samplesLength - 1) {
-            /* end of file.  this can be done implicitly in the mainline,
-               but it's easier to see here in non-clever fashion.
-               Tell the library we're at end of stream so that it can handle
-               the last frame and mark end of stream in the output properly */
-            vorbis_analysis_wrote(&vd, 0);
-
+    int eos = 0;
+    long j = 0;
+    while (!eos) {
+        long toRead = READ;
+        if (j + toRead > samplesLength) {
+            toRead = samplesLength - j;
         }
-        else {
-            /* data to encode */
 
-            /* expose the buffer to submit data */
-            float** buffer = vorbis_analysis_buffer(&vd, READ);
+        if (toRead == 0) {
+            vorbis_analysis_wrote(&vd, 0);
+        }
+        else
+        {
+            float** buffer = vorbis_analysis_buffer(&vd, toRead);
 
-            /* uninterleave samples */
-            for (i = 0; i < READ; i++) {
-                buffer[0][i] = samples[i];
+            long i;
+            for (i = 0; i < toRead; i++) {
+                buffer[0][i] = samples[j++];
                 //TODO: buffer[1][i] = ;
+                test[k++] = buffer[0][i];
             }
 
-            /* tell the library how much we actually submitted */
             vorbis_analysis_wrote(&vd, i);
         }
-
         /* vorbis does some data preanalysis, then divvies up blocks for
            more involved (potentially parallel) processing.  Get a single
            block for encoding now */
