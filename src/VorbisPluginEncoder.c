@@ -5,29 +5,44 @@
 #include <math.h>
 #include <vorbis/vorbisenc.h>
 
-#include "VorbisPluginEncoder.h"
+#include "VorbisPlugin.h"
 
 #define READ 1024
 
-long EncodePcmDataToFile(const float* samples, const long samplesLength, const short channels, const long frequency, const float base_quality, const char* filePath) {
+#define ERROR_INVALID_FILEPATH_PARAMETER 1
+#define ERROR_INVALID_SAMPLES_PARAMETER 2
+#define ERROR_INVALID_SAMPLESLENGTH_PARAMETER 3
+#define ERROR_INVALID_CHANNELS_PARAMETER 4
+#define ERROR_INVALID_FREQUENCY_PARAMETER 5
+#define ERROR_INVALID_BASE_QUALITY_PARAMETER 6
+#define ERROR_CANNOT_OPEN_FILE_FOR_WRITE 7
 
+
+long EncodePcmDataToFile(
+    const char* filePath,
+    const float* samples,
+    const long samplesLength,
+    const short channels,
+    const long frequency,
+    const float base_quality) {
+
+    if (filePath == NULL) {
+        return ERROR_INVALID_FILEPATH_PARAMETER;
+    }
     if (samples == NULL) {
-        return 1;
+        return ERROR_INVALID_SAMPLES_PARAMETER;
     }
     if (samplesLength <= 0) {
-        return 2;
+        return ERROR_INVALID_SAMPLESLENGTH_PARAMETER;
     }
     if (channels != 1 && channels != 2) {
-        return 3;
+        return ERROR_INVALID_CHANNELS_PARAMETER;
     }
     if (frequency < 44100 || frequency > 192000) {
-        return 4;
+        return ERROR_INVALID_FREQUENCY_PARAMETER;
     }
     if (base_quality < 0 || base_quality > 1) {
-        return 5;
-    }
-    if (filePath == NULL) {
-        return 6;
+        return ERROR_INVALID_BASE_QUALITY_PARAMETER;
     }
 
     ogg_stream_state os; /* take physical pages, weld into a logical stream of packets */
@@ -83,7 +98,7 @@ long EncodePcmDataToFile(const float* samples, const long samplesLength, const s
     /* Open file stream to write in */
     FILE* file_stream = fopen(filePath, "wb");
     if (file_stream == NULL) {
-        return 7;
+        return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
     }
 
     /* add a comment */
