@@ -7,17 +7,26 @@
 
 #include "VorbisPlugin.h"
 
-ogg_int16_t convbuffer[4096]; /* take 8k out of the data segment, not the stack */
-int convsize = 4096;
-
 extern void _VDBG_dump(void);
 
 long DecodePcmDataFromFile(
     const char* filePath,
-    const float** samples,
-    const long* samplesLength,
-    const short* channels,
-    const long* frequency) {
+    float** samples,
+    long* samplesLength,
+    short* channels,
+    long* frequency) {
+
+    int convsize = 4096;
+    ogg_int16_t *convbuffer = malloc(convsize * sizeof(ogg_int16_t));
+
+    //size_t size = sizeof(float) * 44;
+    //*samples = malloc(size);
+    //memset(*samples, 0, size);
+    //*samplesLength = 44;
+    //*channels = 2;
+    //*frequency = 42;
+
+    //return 42;
 
     if (filePath == NULL) {
         return 1;
@@ -276,7 +285,17 @@ long DecodePcmDataFromFile(
 
     /* OK, clean up the framer */
     ogg_sync_clear(&oy);
+    free(convbuffer);
 
     fprintf(stderr, "Done.\n");
     return 0;
+}
+
+long EXPORT_API FreeSamplesArrayNativeMemory(float** samples)
+{
+    if (*samples != NULL)
+    {
+        free(*samples);
+        *samples = NULL;
+    }
 }
