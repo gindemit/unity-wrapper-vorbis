@@ -25,6 +25,7 @@ add_library (VorbisPlugin SHARED
 )
 
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/vorbis.lib)
+target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/vorbisfile.lib)
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/ogg.lib)
 
 
