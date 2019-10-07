@@ -1,8 +1,7 @@
-#if _MSC_VER // this is defined when compiling with Visual Studio
-#define EXPORT_API __declspec(dllexport) // Visual Studio needs annotating exported functions with this
-#else
-#define EXPORT_API // XCode does not need annotating exported functions, so define is empty
-#endif
+#ifndef _VORBIS_PLUGIN_H_
+#define _VORBIS_PLUGIN_H_
+
+#include "ExportApi.h"
 
 long EXPORT_API EncodePcmDataToFile(
     const char* filePath,
@@ -20,3 +19,5 @@ long EXPORT_API DecodePcmDataFromFile(
     long* frequency);
 
 long EXPORT_API FreeSamplesArrayNativeMemory(float** samples);
+
+#endif // !_VORBIS_PLUGIN_H_
