@@ -11,3 +11,12 @@ long EXPORT_API EncodePcmDataToFile(
     const short channels,
     const long frequency,
     const float base_quality);
+
+long EXPORT_API DecodePcmDataFromFile(
+    const char* filePath,
+    float** samples,
+    long* samplesLength,
+    short* channels,
+    long* frequency);
+
+long EXPORT_API FreeSamplesArrayNativeMemory(float** samples);
