@@ -5,8 +5,8 @@ cmake_minimum_required (VERSION 3.8)
 
 project(VorbisPlugin)
 
-set (OGG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../dependency/ogg)
-set (VORBIS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../dependency/vorbis)
+set (OGG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/ogg)
+set (VORBIS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/vorbis)
 set (OGG_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/lib)
 
 add_subdirectory(${OGG_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/ogg_build)
@@ -18,10 +18,10 @@ include_directories (VorbisPlugin
 
 # Add source to this project's executable.
 add_library (VorbisPlugin SHARED
-    #../../../src/encoder.c
-    #../../../src/PluginTest.c
-    ../../../src/VorbisPluginEncoder.c
-    ../../../src/VorbisPluginDecoder.c
+    #../../src/encoder.c
+    #../../src/PluginTest.c
+    ../../src/VorbisPluginEncoder.c
+    ../../src/VorbisPluginDecoder.c
 )
 
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/vorbis.lib)
