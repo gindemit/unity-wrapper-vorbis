@@ -13,15 +13,15 @@
       "variables": []
     },
     {
-      "name": "x86-Clang-Debug",
+      "name": "x64-Release",
       "generator": "Ninja",
-      "configurationType": "Debug",
+      "configurationType": "Release",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "clang_cl_x86" ],
+      "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": []
     }
   ]
