@@ -23,10 +23,21 @@ add_library (VorbisPlugin SHARED
     ../../src/VorbisPluginEncoder.c
     ../../src/VorbisPluginDecoder.c
 )
+if (WIN32)
+  set(VORBIS_LIBRARY_NAME vorbis.lib)
+  set(VORBIS_FILE_LIBRARY_NAME vorbisfile.lib)
+  set(OGG_LIBRARY_NAME ogg.lib)
 
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/vorbis.lib)
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/vorbisfile.lib)
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/ogg.lib)
+else()
+  set(VORBIS_LIBRARY_NAME libvorbis.a)
+  set(VORBIS_FILE_LIBRARY_NAME libvorbisfile.a)
+  set(OGG_LIBRARY_NAME libogg.a)
+endif()
+
+
+target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_LIBRARY_NAME})
+target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_FILE_LIBRARY_NAME})
+target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/${OGG_LIBRARY_NAME})
 
 
 # TODO: Add tests and install targets if needed.
