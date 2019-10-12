@@ -87,4 +87,5 @@ long EXPORT_API FreeSamplesArrayNativeMemory(float** samples)
         free(*samples);
         *samples = NULL;
     }
+    return 0;
 }
