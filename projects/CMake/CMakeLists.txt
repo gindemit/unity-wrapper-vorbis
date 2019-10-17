@@ -35,10 +35,16 @@ if (WIN32)
   set(VORBIS_LIBRARY_NAME vorbis.lib)
   set(VORBIS_FILE_LIBRARY_NAME vorbisfile.lib)
 
+elseif(APPLE)
+  set(OGG_LIBRARY_NAME ${CMAKE_BUILD_TYPE}/libogg.a)
+  set(VORBIS_LIBRARY_NAME ${CMAKE_BUILD_TYPE}/libvorbis.a)
+  set(VORBIS_FILE_LIBRARY_NAME ${CMAKE_BUILD_TYPE}/libvorbisfile.a)
+
 else()
   set(OGG_LIBRARY_NAME libogg.a)
   set(VORBIS_LIBRARY_NAME libvorbis.a)
   set(VORBIS_FILE_LIBRARY_NAME libvorbisfile.a)
+
 endif()
 
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_FILE_LIBRARY_NAME})
