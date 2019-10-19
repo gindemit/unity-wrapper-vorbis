@@ -144,10 +144,6 @@ long EncodePcmDataToFile(
 
     }
 
-    float test[44100];
-    memset(test, 2, sizeof(float) * 44100);
-    long k = 0;
-
     int eos = 0;
     long j = 0;
     while (!eos) {
@@ -167,7 +163,6 @@ long EncodePcmDataToFile(
             for (i = 0; i < toRead; i++) {
                 buffer[0][i] = samples[j++];
                 //TODO: buffer[1][i] = ;
-                test[k++] = buffer[0][i];
             }
 
             vorbis_analysis_wrote(&vd, i);
