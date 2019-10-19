@@ -51,5 +51,8 @@ target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_LIBRARY_NAME})
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/${OGG_LIBRARY_NAME})
 
+add_dependencies(vorbisfile vorbis ogg)
+add_dependencies(vorbis ogg)
+add_dependencies(VorbisPlugin vorbisfile vorbis ogg)
 
 # TODO: Add tests and install targets if needed.
