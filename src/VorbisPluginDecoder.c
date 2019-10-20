@@ -52,6 +52,12 @@ long DecodePcmDataFromFile(
     initArray(&all_pcm, vi->rate);
 
     while (!eof) {
+
+        /*  pcm is actually an array of floating point arrays, one for each channel of audio.
+            If you are decoding stereo, pcm[0] will be the array of left channel samples,
+            and pcm[1] will be the right channel.
+            As you might expect, pcm[0][0] will be the first sample in the left channel,
+            and pcm[1][0] will be the first sample in the right channel.*/
         float** pcm;
         long ret = ov_read_float(&vf, &pcm, 1024, &current_section);
         if (ret == 0) {
