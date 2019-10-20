@@ -162,7 +162,9 @@ long EncodePcmDataToFile(
             long i;
             for (i = 0; i < toRead; i++) {
                 buffer[0][i] = samples[j++];
-                //TODO: buffer[1][i] = ;
+                if (channels == 2) {
+                    buffer[1][i] = samples[j++];
+                }
             }
 
             vorbis_analysis_wrote(&vd, i);
