@@ -49,7 +49,7 @@ long DecodePcmDataFromFile(
     *frequency = vi->rate;
 
     Array all_pcm;
-    initArray(&all_pcm, 44100);
+    initArray(&all_pcm, vi->rate);
 
     while (!eof) {
         float** pcm;
@@ -59,12 +59,11 @@ long DecodePcmDataFromFile(
             eof = 1;
         }
         else if (ret < 0) {
-            /* error in the stream.  Not a problem, just reporting it in
-           case we (the app) cares.  In this case, we don't. */
+            return 2;
         }
         else {
-            for (int i = 0; i < vi->channels; ++i) {
             for (int j = 0; j < ret; ++j) {
+                for (int i = 0; i < vi->channels; ++i) {
                     insertArray(&all_pcm, pcm[i][j]);
                 }
             }
