@@ -19,20 +19,20 @@
 
 
 long EncodePcmDataToFile(
-    const char* filePath,
+    const char* file_path,
     const float* samples,
-    const long samplesLength,
+    const long samples_length,
     const short channels,
     const long frequency,
     const float base_quality) {
 
-    if (filePath == NULL) {
+    if (file_path == NULL) {
         return ERROR_INVALID_FILEPATH_PARAMETER;
     }
     if (samples == NULL) {
         return ERROR_INVALID_SAMPLES_PARAMETER;
     }
-    if (samplesLength <= 0) {
+    if (samples_length <= 0) {
         return ERROR_INVALID_SAMPLESLENGTH_PARAMETER;
     }
     if (channels != 1 && channels != 2) {
@@ -96,7 +96,7 @@ long EncodePcmDataToFile(
         return ret;
     }
     /* Open file stream to write in */
-    FILE* file_stream = fopen(filePath, "wb");
+    FILE* file_stream = fopen(file_path, "wb");
     if (file_stream == NULL) {
         return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
     }
@@ -148,8 +148,8 @@ long EncodePcmDataToFile(
     long j = 0;
     while (!eos) {
         long toRead = READ;
-        if (j + toRead > samplesLength) {
-            toRead = samplesLength - j;
+        if (j + toRead > samples_length) {
+            toRead = samples_length - j;
         }
 
         if (toRead == 0) {

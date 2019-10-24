@@ -12,17 +12,17 @@
 extern void _VDBG_dump(void);
 
 long DecodePcmDataFromFile(
-    const char* filePath,
+    const char* file_path,
     float** samples_to_fill,
     long* samples_filled_length,
     short* channels,
     long* frequency) {
 
-    if (filePath == NULL) {
+    if (file_path == NULL) {
         return 1;
     }
 
-    FILE* file_stream = fopen(filePath, "rb");
+    FILE* file_stream = fopen(file_path, "rb");
     if (file_stream == NULL) {
         return 2;
     }
