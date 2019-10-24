@@ -7,9 +7,6 @@
 
 #include "VorbisPlugin.h"
 
-#define READ 1024
-
-
 #define ERROR_INVALID_FILEPATH_PARAMETER 1
 #define ERROR_INVALID_FILESTREAM_PARAMETER 2
 #define ERROR_CANNOT_OPEN_FILE_FOR_WRITE 3
@@ -28,7 +25,8 @@ long EXPORT_API EncodePcmDataToFileStream(
     const long samples_length,
     const short channels,
     const long frequency,
-    const float base_quality) {
+    const float base_quality,
+    const long samplesToRead) {
 
     if (file_stream == NULL) {
         return ERROR_INVALID_FILESTREAM_PARAMETER;
@@ -146,7 +144,7 @@ long EXPORT_API EncodePcmDataToFileStream(
     int eos = 0;
     long j = 0;
     while (!eos) {
-        long toRead = READ;
+        long toRead = samplesToRead;
         if (j + toRead > samples_length) {
             toRead = samples_length - j;
         }
@@ -221,7 +219,8 @@ long EncodePcmDataToFile(
     const long samples_length,
     const short channels,
     const long frequency,
-    const float base_quality) {
+    const float base_quality,
+    const long samplesToRead) {
 
     if (file_path == NULL) {
         return ERROR_INVALID_FILEPATH_PARAMETER;
@@ -231,5 +230,12 @@ long EncodePcmDataToFile(
     if (file_stream == NULL) {
         return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
     }
-    return EncodePcmDataToFileStream(file_stream, samples, samples_length, channels, frequency, base_quality);
+    return EncodePcmDataToFileStream(
+        file_stream,
+        samples,
+        samples_length,
+        channels,
+        frequency,
+        base_quality,
+        samplesToRead);
 }

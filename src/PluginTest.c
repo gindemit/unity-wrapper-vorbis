@@ -14,7 +14,7 @@ static int nearlyEqual(float a, float b, float epsilon)
 
 int main() {
 
-    EncodePcmDataToFile("1_plugin_test_out_text.ogg", testData, testDataLength, 1, 44100, 0.2);
+    EncodePcmDataToFile("1_plugin_test_out_text.ogg", testData, testDataLength, 1, 44100, 0.2, 1024);
     float* samples;
     long samples_filled_length;
     short channels;
