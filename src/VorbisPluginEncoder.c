@@ -9,13 +9,17 @@
 
 #define READ 1024
 
+
 #define ERROR_INVALID_FILEPATH_PARAMETER 1
-#define ERROR_INVALID_SAMPLES_PARAMETER 2
-#define ERROR_INVALID_SAMPLESLENGTH_PARAMETER 3
-#define ERROR_INVALID_CHANNELS_PARAMETER 4
-#define ERROR_INVALID_FREQUENCY_PARAMETER 5
-#define ERROR_INVALID_BASE_QUALITY_PARAMETER 6
-#define ERROR_CANNOT_OPEN_FILE_FOR_WRITE 7
+#define ERROR_INVALID_FILESTREAM_PARAMETER 2
+#define ERROR_CANNOT_OPEN_FILE_FOR_WRITE 3
+
+
+#define ERROR_INVALID_SAMPLES_PARAMETER 10
+#define ERROR_INVALID_SAMPLESLENGTH_PARAMETER 11
+#define ERROR_INVALID_CHANNELS_PARAMETER 12
+#define ERROR_INVALID_FREQUENCY_PARAMETER 13
+#define ERROR_INVALID_BASE_QUALITY_PARAMETER 14
 
 
 long EncodePcmDataToFile(
@@ -28,6 +32,25 @@ long EncodePcmDataToFile(
 
     if (file_path == NULL) {
         return ERROR_INVALID_FILEPATH_PARAMETER;
+    }
+    /* Open file stream to write in */
+    FILE* file_stream = fopen(file_path, "wb");
+    if (file_stream == NULL) {
+        return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
+    }
+    return EncodePcmDataToFileStream(file_stream, samples, samples_length, channels, frequency, base_quality);
+}
+
+long EXPORT_API EncodePcmDataToFileStream(
+    FILE* file_stream,
+    const float* samples,
+    const long samples_length,
+    const short channels,
+    const long frequency,
+    const float base_quality) {
+
+    if (file_stream == NULL) {
+        return ERROR_INVALID_FILESTREAM_PARAMETER;
     }
     if (samples == NULL) {
         return ERROR_INVALID_SAMPLES_PARAMETER;
@@ -94,11 +117,6 @@ long EncodePcmDataToFile(
 
     if (ret) {
         return ret;
-    }
-    /* Open file stream to write in */
-    FILE* file_stream = fopen(file_path, "wb");
-    if (file_stream == NULL) {
-        return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
     }
 
     /* add a comment */
