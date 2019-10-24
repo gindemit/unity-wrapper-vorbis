@@ -56,10 +56,6 @@ add_dependencies(vorbis ogg)
 add_dependencies(VorbisPlugin vorbisfile vorbis ogg)
 
 
-if (WIN32)
-set_target_properties(VorbisPlugin PROPERTIES
-                      RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/../../unity/unity-project-vorbis/UnityClient/Assets/Plugins/Windows/x86_64/)
 
-add_custom_command(TARGET VorbisPlugin POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:VorbisPlugin> ${targetfile})
-endif()
+add_executable(VorbisPluginTest ../../src/PluginTest.c)
+target_link_libraries(VorbisPluginTest VorbisPlugin)
