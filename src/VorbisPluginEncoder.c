@@ -22,25 +22,6 @@
 #define ERROR_INVALID_BASE_QUALITY_PARAMETER 14
 
 
-long EncodePcmDataToFile(
-    const char* file_path,
-    const float* samples,
-    const long samples_length,
-    const short channels,
-    const long frequency,
-    const float base_quality) {
-
-    if (file_path == NULL) {
-        return ERROR_INVALID_FILEPATH_PARAMETER;
-    }
-    /* Open file stream to write in */
-    FILE* file_stream = fopen(file_path, "wb");
-    if (file_stream == NULL) {
-        return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
-    }
-    return EncodePcmDataToFileStream(file_stream, samples, samples_length, channels, frequency, base_quality);
-}
-
 long EXPORT_API EncodePcmDataToFileStream(
     FILE* file_stream,
     const float* samples,
@@ -232,4 +213,23 @@ long EXPORT_API EncodePcmDataToFileStream(
 
     fprintf(stderr, "Done.\n");
     return 0;
+}
+
+long EncodePcmDataToFile(
+    const char* file_path,
+    const float* samples,
+    const long samples_length,
+    const short channels,
+    const long frequency,
+    const float base_quality) {
+
+    if (file_path == NULL) {
+        return ERROR_INVALID_FILEPATH_PARAMETER;
+    }
+    /* Open file stream to write in */
+    FILE* file_stream = fopen(file_path, "wb");
+    if (file_stream == NULL) {
+        return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
+    }
+    return EncodePcmDataToFileStream(file_stream, samples, samples_length, channels, frequency, base_quality);
 }
