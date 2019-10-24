@@ -10,7 +10,8 @@ long EXPORT_API EncodePcmDataToFile(
     const long samples_length,
     const short channels,
     const long frequency,
-    const float base_quality);
+    const float base_quality,
+    const long samplesToRead);
 
 long EXPORT_API DecodePcmDataFromFile(
     const char* file_path,
