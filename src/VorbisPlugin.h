@@ -18,7 +18,8 @@ long EXPORT_API DecodePcmDataFromFile(
     float** samples,
     long* samples_length,
     short* channels,
-    long* frequency);
+    long* frequency,
+    const long maxSamplesToRead);
 
 long EXPORT_API FreeSamplesArrayNativeMemory(float** samples);
 

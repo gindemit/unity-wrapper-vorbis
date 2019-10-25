@@ -19,7 +19,7 @@ int main() {
     long samples_filled_length;
     short channels;
     long frequency;
-    DecodePcmDataFromFile("1_plugin_test_out_text.ogg", &samples, &samples_filled_length, &channels, &frequency);
+    DecodePcmDataFromFile("1_plugin_test_out_text.ogg", &samples, &samples_filled_length, &channels, &frequency, 1024);
 
     assert(44101 == samples_filled_length);
     assert(1 == channels);
