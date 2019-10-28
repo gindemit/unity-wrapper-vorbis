@@ -4,7 +4,7 @@
 #include "ExportApi.h"
 #include <stdio.h>
 
-long EXPORT_API EncodePcmDataToFile(
+long EXPORT_API WriteAllPcmDataToFile(
     const char* file_path,
     const float* samples,
     const long samples_length,
@@ -13,7 +13,7 @@ long EXPORT_API EncodePcmDataToFile(
     const float base_quality,
     const long samplesToRead);
 
-long EXPORT_API DecodePcmDataFromFile(
+long EXPORT_API ReadAllPcmDataFromFile(
     const char* file_path,
     float** samples,
     long* samples_length,
