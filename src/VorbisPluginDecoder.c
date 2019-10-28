@@ -12,7 +12,7 @@
 
 extern void _VDBG_dump(void);
 
-long DecodePcmDataFromFileStream(
+long ReadAllPcmDataFromFileStream(
     FILE* file_stream,
     float** samples_to_fill,
     long* samples_filled_length,
@@ -80,7 +80,7 @@ long DecodePcmDataFromFileStream(
     return 0;
 }
 
-long DecodePcmDataFromFile(
+long ReadAllPcmDataFromFile(
     const char* file_path,
     float** samples_to_fill,
     long* samples_filled_length,
@@ -96,7 +96,7 @@ long DecodePcmDataFromFile(
     if (file_stream == NULL) {
         return ERROR_CANNOT_OPEN_FILE_FOR_READ;
     }
-    return DecodePcmDataFromFileStream(
+    return ReadAllPcmDataFromFileStream(
         file_stream,
         samples_to_fill,
         samples_filled_length,

@@ -9,7 +9,7 @@
 #include "ErrorCodes.h"
 
 
-long EXPORT_API EncodePcmDataToFileStream(
+long EXPORT_API WriteAllPcmDataToFileStream(
     FILE* file_stream,
     const float* samples,
     const long samples_length,
@@ -203,7 +203,7 @@ long EXPORT_API EncodePcmDataToFileStream(
     return 0;
 }
 
-long EncodePcmDataToFile(
+long WriteAllPcmDataToFile(
     const char* file_path,
     const float* samples,
     const long samples_length,
@@ -220,7 +220,7 @@ long EncodePcmDataToFile(
     if (file_stream == NULL) {
         return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
     }
-    return EncodePcmDataToFileStream(
+    return WriteAllPcmDataToFileStream(
         file_stream,
         samples,
         samples_length,
