@@ -3,8 +3,9 @@
 
 #include "ExportApi.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-long EXPORT_API WriteAllPcmDataToFile(
+EXPORT_API long WriteAllPcmDataToFile(
     const char* file_path,
     const float* samples,
     const long samples_length,
@@ -13,7 +14,8 @@ long EXPORT_API WriteAllPcmDataToFile(
     const float base_quality,
     const long samplesToRead);
 
-long EXPORT_API ReadAllPcmDataFromFile(
+
+EXPORT_API long ReadAllPcmDataFromFile(
     const char* file_path,
     float** samples,
     long* samples_length,
@@ -21,6 +23,7 @@ long EXPORT_API ReadAllPcmDataFromFile(
     long* frequency,
     const long maxSamplesToRead);
 
-long EXPORT_API FreeSamplesArrayNativeMemory(float** samples);
+EXPORT_API long FreeSamplesArrayNativeMemory(float** samples);
+
 
 #endif // !_VORBIS_PLUGIN_H_

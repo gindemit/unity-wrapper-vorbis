@@ -12,6 +12,43 @@
 
 extern void _VDBG_dump(void);
 
+typedef struct VorbisFileReadStreamState {
+    OggVorbis_File vf;
+    int eof;
+    int current_section;
+    vorbis_info* vi;
+} VorbisFileReadStreamState;
+
+
+VorbisFileReadStreamState* ReadHeaderFromFileStream(
+    FILE* file_stream,
+    short* channels,
+    long* frequency) {
+
+    VorbisFileReadStreamState* state = malloc(sizeof(VorbisFileReadStreamState));
+    if (state == NULL) {
+        return NULL;
+    }
+    memset(state, 0, sizeof(VorbisFileReadStreamState));
+
+    if (ov_open_callbacks(file_stream, &(state->vf), NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
+        fprintf(stderr, "Input does not appear to be an Ogg bitstream.\n");//TODO: use logger callback
+        return NULL;
+    }
+
+    char** ptr = ov_comment(&(state->vf), -1)->user_comments;
+    state->vi = ov_info(&(state->vf), -1);
+    while (*ptr) {
+        fprintf(stderr, "%s\n", *ptr);
+        ++ptr;
+    }
+    fprintf(stderr, "\nBitstream is %d channel, %ldHz\n", state->vi->channels, state->vi->rate);
+    fprintf(stderr, "Encoded by: %s\n\n", ov_comment(&(state->vf), -1)->vendor);
+    *channels = state->vi->channels;
+    *frequency = state->vi->rate;
+    return state;
+}
+
 long ReadAllPcmDataFromFileStream(
     FILE* file_stream,
     float** samples_to_fill,
@@ -20,33 +57,12 @@ long ReadAllPcmDataFromFileStream(
     long* frequency,
     const long maxSamplesToRead) {
 
-    if (file_stream == NULL) {
-        return ERROR_INVALID_FILESTREAM_PARAMETER;
-    }
-    OggVorbis_File vf;
-    int eof = 0;
-    int current_section;
-
-    if (ov_open_callbacks(file_stream, &vf, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
-        fprintf(stderr, "Input does not appear to be an Ogg bitstream.\n");
-        return ERROR_INPUT_FILESTREAM_IS_NOT_OGG_STREAM;
-    }
-
-    char** ptr = ov_comment(&vf, -1)->user_comments;
-    vorbis_info* vi = ov_info(&vf, -1);
-    while (*ptr) {
-        fprintf(stderr, "%s\n", *ptr);
-        ++ptr;
-    }
-    fprintf(stderr, "\nBitstream is %d channel, %ldHz\n", vi->channels, vi->rate);
-    fprintf(stderr, "Encoded by: %s\n\n", ov_comment(&vf, -1)->vendor);
-    *channels = vi->channels;
-    *frequency = vi->rate;
+    VorbisFileReadStreamState* state = ReadHeaderFromFileStream(file_stream, channels, frequency);
 
     Array all_pcm;
-    initArray(&all_pcm, vi->rate);
+    initArray(&all_pcm, state->vi->rate);
 
-    while (!eof) {
+    while (!state->eof) {
 
         /*  pcm is actually an array of floating point arrays, one for each channel of audio.
             If you are decoding stereo, pcm[0] will be the array of left channel samples,
@@ -54,17 +70,17 @@ long ReadAllPcmDataFromFileStream(
             As you might expect, pcm[0][0] will be the first sample in the left channel,
             and pcm[1][0] will be the first sample in the right channel.*/
         float** pcm;
-        long ret = ov_read_float(&vf, &pcm, maxSamplesToRead, &current_section);
+        long ret = ov_read_float(&(state->vf), &pcm, maxSamplesToRead, &(state->current_section));
         if (ret == 0) {
             /* EOF */
-            eof = 1;
+            state->eof = 1;
         }
         else if (ret < 0) {
             return ERROR_READING_OGG_STREAM;
         }
         else {
             for (int j = 0; j < ret; ++j) {
-                for (int i = 0; i < vi->channels; ++i) {
+                for (int i = 0; i < state->vi->channels; ++i) {
                     insertArray(&all_pcm, pcm[i][j]);
                 }
             }
@@ -73,11 +89,27 @@ long ReadAllPcmDataFromFileStream(
 
     *samples_to_fill = all_pcm.array;
     *samples_filled_length = all_pcm.used;
-    ov_clear(&vf);
+
+    ov_clear(&(state->vf));
+    free(state);
     fclose(file_stream);
 
     fprintf(stderr, "Done.\n");
     return 0;
+}
+
+FILE* OpenFileToStreamFrom(const char* file_path) {
+    if (file_path == NULL) {
+        //TODO: add message to logger
+        return NULL;
+    }
+
+    FILE* file_stream = fopen(file_path, "rb");
+    if (file_stream == NULL) {
+        //TODO: add message to logger
+        return NULL;
+    }
+    return file_stream;
 }
 
 long ReadAllPcmDataFromFile(
@@ -92,7 +124,7 @@ long ReadAllPcmDataFromFile(
         return ERROR_INVALID_FILEPATH_PARAMETER;
     }
 
-    FILE* file_stream = fopen(file_path, "rb");
+    FILE* file_stream = OpenFileToStreamFrom(file_path);
     if (file_stream == NULL) {
         return ERROR_CANNOT_OPEN_FILE_FOR_READ;
     }
@@ -105,10 +137,8 @@ long ReadAllPcmDataFromFile(
         maxSamplesToRead);
 }
 
-long EXPORT_API FreeSamplesArrayNativeMemory(float** samples)
-{
-    if (*samples != NULL)
-    {
+long EXPORT_API FreeSamplesArrayNativeMemory(float** samples) {
+    if (*samples != NULL) {
         free(*samples);
         *samples = NULL;
     }
