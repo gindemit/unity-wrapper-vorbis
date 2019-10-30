@@ -27,10 +27,26 @@ static void TestEncodeToFileDecodeFromFile() {
         int result = nearlyEqual(testData[i], samples[i], 0.05);
         assert(result);
     }
-    printf("Encode Decode success");
+    printf("Encode Decode Success\n");
+}
+static void TestReadFromFileStream() {
+    short channels;
+    long frequency;
+    VorbisFileReadStreamState* state = OpenReadFileStream("1_plugin_test_out_text.ogg", &channels, &frequency);
+    assert(1 == channels);
+    assert(44100 == frequency);
+
+    while (!state->eof) {
+        long maxSamplesToLoad = 1024;
+        float* samples = malloc(sizeof(float)* maxSamplesToLoad);
+        ReadFromFileStream(state, samples, maxSamplesToLoad);
+        free(samples);
+    }
+    CloseFileStream(state);
+    printf("Read From FileStream Success\n");
 }
 
 int main() {
     TestEncodeToFileDecodeFromFile();
-
+    TestReadFromFileStream();
 }
