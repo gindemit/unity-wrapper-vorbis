@@ -17,7 +17,7 @@ long ReadAllPcmDataFromFile(
     long* samples_filled_length,
     short* channels,
     long* frequency,
-    const long maxSamplesToRead) {
+    const long max_samples_to_read) {
 
     VorbisFileReadStreamState* state = OpenReadFileStream(file_path, channels, frequency);
 
@@ -32,7 +32,7 @@ long ReadAllPcmDataFromFile(
             As you might expect, pcm[0][0] will be the first sample in the left channel,
             and pcm[1][0] will be the first sample in the right channel.*/
         float** pcm;
-        long ret = ov_read_float(&(state->vf), &pcm, maxSamplesToRead, &(state->current_section));
+        long ret = ov_read_float(&(state->vf), &pcm, max_samples_to_read, &(state->current_section));
         if (ret == 0) {
             /* EOF */
             state->eof = 1;
@@ -54,7 +54,6 @@ long ReadAllPcmDataFromFile(
     CloseFileStream(state);
     return 0;
 }
-
 long EXPORT_API FreeSamplesArrayNativeMemory(float** samples) {
     if (*samples != NULL) {
         free(*samples);
@@ -96,15 +95,14 @@ VorbisFileReadStreamState* OpenReadFileStream(const char* file_path, short* chan
     *frequency = state->vi->rate;
     return state;
 }
-
-long ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill, const long maxSamplesToRead) {
+long ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill, const long max_samples_to_read) {
     /*  pcm is actually an array of floating point arrays, one for each channel of audio.
     If you are decoding stereo, pcm[0] will be the array of left channel samples,
     and pcm[1] will be the right channel.
     As you might expect, pcm[0][0] will be the first sample in the left channel,
     and pcm[1][0] will be the first sample in the right channel.*/
     float** pcm;
-    long ret = ov_read_float(&(state->vf), &pcm, maxSamplesToRead, &(state->current_section));
+    long ret = ov_read_float(&(state->vf), &pcm, max_samples_to_read, &(state->current_section));
     if (ret == 0) {
         /* EOF */
         state->eof = 1;
@@ -120,6 +118,7 @@ long ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill
             }
         }
     }
+    return ret;
 }
 long CloseFileStream(VorbisFileReadStreamState* state) {
     ov_clear(&(state->vf));
