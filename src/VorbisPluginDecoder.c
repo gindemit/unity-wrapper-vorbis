@@ -101,24 +101,30 @@ long ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill
     and pcm[1] will be the right channel.
     As you might expect, pcm[0][0] will be the first sample in the left channel,
     and pcm[1][0] will be the first sample in the right channel.*/
-    float** pcm;
-    long ret = ov_read_float(&(state->vf), &pcm, max_samples_to_read, &(state->current_section));
-    if (ret == 0) {
-        /* EOF */
-        state->eof = 1;
-    }
-    else if (ret < 0) {
-        return ERROR_READING_OGG_STREAM;
-    }
-    else {
-        long counter = 0;
-        for (int j = 0; j < ret; ++j) {
-            for (int i = 0; i < state->vi->channels; ++i) {
-                samples_to_fill[counter] = pcm[i][j];
+    long samples_actually_read = 0;
+    do
+    {
+        float** pcm;
+        long ret = ov_read_float(&(state->vf), &pcm, max_samples_to_read, &(state->current_section));
+        if (ret == 0) {
+            /* EOF */
+            state->eof = 1;
+        }
+        else if (ret < 0) {
+            return ERROR_READING_OGG_STREAM;
+        }
+        else {
+            long counter = samples_actually_read;
+            const int channels = state->vi->channels;
+            for (int j = 0; j < ret; ++j) {
+                for (int i = 0; i < channels; ++i) {
+                    samples_to_fill[counter++] = pcm[i][j];
+                }
             }
         }
-    }
-    return ret;
+        samples_actually_read += ret;
+    } while (samples_actually_read < max_samples_to_read);
+    return max_samples_to_read;
 }
 long CloseFileStream(VorbisFileReadStreamState* state) {
     ov_clear(&(state->vf));
