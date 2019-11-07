@@ -9,6 +9,8 @@ set (OGG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/ogg)
 set (VORBIS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/vorbis)
 set (OGG_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/lib)
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/ogg_build/include)
+
 add_subdirectory(${OGG_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/ogg_build)
 add_subdirectory(${VORBIS_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build)
 
@@ -23,12 +25,6 @@ add_library (VorbisPlugin SHARED
     ../../src/VorbisPluginEncoder.c
     ../../src/VorbisPluginDecoder.c
 )
-
-target_include_directories(ogg PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/include)
-target_include_directories(vorbis PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/include)
-target_include_directories(vorbisfile PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/include)
-target_include_directories(VorbisPlugin PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/include)
-
 
 if (WIN32)
   set(OGG_LIBRARY_NAME ogg.lib)
@@ -56,6 +52,6 @@ add_dependencies(vorbis ogg)
 add_dependencies(VorbisPlugin vorbisfile vorbis ogg)
 
 
-
+#Adding simple test program:
 add_executable(VorbisPluginTest ../../src/PluginTest.c)
 target_link_libraries(VorbisPluginTest VorbisPlugin)
