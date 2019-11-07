@@ -2,12 +2,12 @@
 
 This repository contain only C/C++ code. The Unity project is added as git submodule.
 
-### Following functions are supported:
+## Following functions are supported:
 - Write all PCM data to ogg file at path
 - Read all ogg data from file to float[] samples array
 - Stream read ogg from file
 
-### Build process
+## Build process:
 
 **Build on Windows for Windows operating system (x64-Debug, x64-Release, x86-Debug, x86-Release)**: 
 
@@ -33,3 +33,13 @@ I have no idea why vorbis plugin developers include the vorbisenc.c file only fo
 **Build on MacOS for iOS operating system**:
 
 Install CMake (better GUI version). Open the "unity-vorbis/projects/CMake" folder and generate xCode project.
+
+## Project structure:
+
+- **unity-vorbis**
+ - **dependency** this folder contain the git submodules for *ogg* and *vorbis* repositories
+  - **ogg** ogg repository
+  - **vorbis** vorbis repository
+ - **projects** this folder contain the Android and CMake project
+ - **src** this folder contain the source code of the VorbisPlugin and also PluginTest.c file (simple program to test the Save/Load function)
+ - **unity** this folder contain the Unity part of the VorbisPlugin (sample project and source C# files)
