@@ -130,4 +130,5 @@ long CloseFileStream(VorbisFileReadStreamState* state) {
     ov_clear(&(state->vf));
     fclose(state->file_stream);
     free(state);
+    return 0;
 }
