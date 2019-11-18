@@ -29,6 +29,7 @@ If you receive linker error that vorbis_encode_init_vbr could not be resolved, t
 #endif()
 ```
 I have no idea why vorbis plugin developers include the vorbisenc.c file only for Windows.
+The code above will include the vorbisenc.c file to the Vorbis library.
 
 **Build on MacOS for iOS operating system**:
 
