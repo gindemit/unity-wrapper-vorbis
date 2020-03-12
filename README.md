@@ -33,7 +33,16 @@ The code above will include the vorbisenc.c file to the Vorbis library.
 
 **Build on MacOS for iOS operating system**:
 
-Install CMake (better GUI version). Open the "unity-vorbis/projects/CMake" folder and generate xCode project.
+Install CMake. Open the "unity-vorbis/projects/CMake" folder and generate xCode project.
+From terminal:
+if cmake is not installed (to check type "cmake" in terminal) then install it: 
+```
+brew install cmake
+```
+Then go to "unity-vorbis/projects/CMake" directory and run:
+```
+cmake -S . -B ./build -G Xcode
+```
 
 ## Project structure:
 
