@@ -43,6 +43,7 @@ Then go to "unity-vorbis/projects/CMake" directory and run:
 ```
 cmake -S . -B ./build -G Xcode
 ```
+Open the xCode project located in build directory. Build it. After successfull build you can find the libVorbisPlugin.dylib under Products section in xCode.
 
 ## Project structure:
 
