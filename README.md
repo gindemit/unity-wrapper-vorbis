@@ -1,6 +1,7 @@
 # C wrapper source code for Unity Vorbis plugin
 
 This repository contain only C code. [The Unity project](https://github.com/khindemit/unity-project-vorbis) that use this wrapper is added as git submodule.
+The ogg and vorbis projects are added also as submodules. When you checkout this repository you need to initialize and update submudules.
 
 ## Following functions are supported:
 - Write all PCM data to ogg file at path
