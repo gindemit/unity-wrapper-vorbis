@@ -39,6 +39,12 @@ unity-vorbis\projects\Android\app\.cxx\cmake\debug\[TARGET_ABI]\ogg_build\includ
 I have no idea why vorbis plugin developers include the vorbisenc.c file only for Windows.
 The code above will include the vorbisenc.c file to the Vorbis library.
 
+By default you'll get the debug versions of the libraries. To build the release versions you need to run the gradle task "compileReleaseSources". To do so you need to
+click gradle menu on top right side of Android Studio and go to "Android->app->Tasks->build->compileReleaseSources"
+
+The output libraries you'll find in following folders:
+```unity-vorbis\projects\Android\app\build\intermediates\cmake\[debug OR release]\obj\[TARGET ABI]\```
+
 **Build on MacOS for iOS operating system**:
 
 Install CMake. Open the "unity-vorbis/projects/CMake" folder and generate xCode project.
