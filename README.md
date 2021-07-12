@@ -21,11 +21,14 @@ For example if the selected configuration is x64-Debug then the VorbisPlugin.dll
 
 Open the project in AndroidStudio ("unity-vorbis/projects/Android/" folder)
 Make sure that the Adroid SDK and Android NDK are installed.
+If you want to build for multiple ABIs, you need to add it to the build.gradle file:
+```abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'```
+
 Run Build->Make Project menu item.
 1. If you get a fatal error: 'ogg/ogg.h' file not found, you can workaround it by copying the ogg.h and os_types.h files from 
 unity-vorbis\dependency\ogg\include\ogg\
 to
-unity-vorbis\projects\Android\app\.cxx\cmake\debug\armeabi-v7a\ogg_build\include\ogg\
+unity-vorbis\projects\Android\app\.cxx\cmake\debug\[TARGET_ABI]\ogg_build\include\ogg\
 2. If you receive linker error that vorbis_encode_init_vbr could not be resolved, then open the
 "unity-vorbis\dependency\vorbis\lib\CMakeLists.txt" file and comment out the if(WIN32) and endif() lines, it sould look like this:
 ```
