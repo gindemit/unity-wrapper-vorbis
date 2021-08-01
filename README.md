@@ -61,6 +61,7 @@ To build the project from terminal you can run:
 ```
 cmake --build ./buildOSX --config Release
 ```
+After successful build you can find the static libraries for iOS in VorbisPluginBuild folder.
 
 
 **Build on MacOS for iOS operating system**:
