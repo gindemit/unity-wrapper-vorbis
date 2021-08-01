@@ -45,7 +45,7 @@ click gradle menu on top right side of Android Studio and go to "Android->app->T
 The output libraries you'll find in following folders:
 ```unity-vorbis\projects\Android\app\build\intermediates\cmake\[debug OR release]\obj\[TARGET ABI]\```
 
-**Build on MacOS for iOS operating system**:
+**Build on MacOS for Mac OSX operating system**:
 
 Install CMake. Open the "unity-vorbis/projects/CMake" folder and generate xCode project.
 From terminal:
@@ -55,9 +55,34 @@ brew install cmake
 ```
 Then go to "unity-vorbis/projects/CMake" directory and run:
 ```
-cmake -S . -B ./build -G Xcode
+cmake -S . -B ./buildOSX -G Xcode -DVORBIS_OSX=1
 ```
-Open the xCode project located in build directory. Build it. After successful build you can find the libVorbisPlugin.dylib under Products section in xCode. You can open the directory in finder and copy this library to your Unity project.
+To build the project from terminal you can run:
+```
+cmake --build ./buildOSX --config Release
+```
+
+
+**Build on MacOS for iOS operating system**:
+
+To build for iOS you need to initialize the iOS Toolchain submodule under dependency folder.
+Install CMake. Open the "unity-vorbis/projects/CMake" folder and generate xCode project.
+From terminal:
+if cmake is not installed (to check type "cmake" in terminal) then install it: 
+```
+brew install cmake
+```
+Then go to "unity-vorbis/projects/CMake" directory and run:
+```
+cmake -S . -B ./buildIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=../../dependency/cmake-ios-toolchain/ios.toolchain.cmake -DPLATFORM=OS64 -DVORBIS_IOS=1
+```
+To build the project from terminal you can run:
+```
+cmake --build ./buildIOS --config Release --target VorbisPlugin
+```
+Or you can open the xCode project located in buildIOS directory. In xCode select VorbisPlugin->Any iOS Device (arm64). Build it. After successful build you can find the static libraries for iOS in VorbisPluginBuild folder. You can open the directory in finder and copy the libraries to your Unity project.
+Notice that the libraries are build with arm64 architecture only (iPhone 6+). If you need to build also for armv7, you need to select in xCode standart libraries under Build Settings Architectures for VorbisPlugin build target.
+By default the build will create Debug libraries. To build Release ones you need in xCode modify the current scheme: Product->Scheme-Edit Scheme... and change the build configuration.
 
 ## Project structure:
 
