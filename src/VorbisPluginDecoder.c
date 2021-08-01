@@ -11,13 +11,13 @@
 
 extern void _VDBG_dump(void);
 
-long ReadAllPcmDataFromFile(
+int32_t ReadAllPcmDataFromFile(
     const char* file_path,
     float** samples_to_fill,
-    long* samples_filled_length,
-    short* channels,
-    long* frequency,
-    const long max_samples_to_read) {
+    int32_t* samples_filled_length,
+    int16_t* channels,
+    int32_t* frequency,
+    const int32_t max_samples_to_read) {
 
     VorbisFileReadStreamState* state = OpenReadFileStream(file_path, channels, frequency);
 
@@ -54,7 +54,7 @@ long ReadAllPcmDataFromFile(
     CloseFileStream(state);
     return 0;
 }
-long EXPORT_API FreeSamplesArrayNativeMemory(float** samples) {
+int32_t EXPORT_API FreeSamplesArrayNativeMemory(float** samples) {
     if (*samples != NULL) {
         free(*samples);
         *samples = NULL;
@@ -62,7 +62,7 @@ long EXPORT_API FreeSamplesArrayNativeMemory(float** samples) {
     return 0;
 }
 
-VorbisFileReadStreamState* OpenReadFileStream(const char* file_path, short* channels, long* frequency) {
+VorbisFileReadStreamState* OpenReadFileStream(const char* file_path, int16_t* channels, int32_t* frequency) {
     if (file_path == NULL) {
         //TODO: add message to logger
         return NULL;
@@ -95,7 +95,7 @@ VorbisFileReadStreamState* OpenReadFileStream(const char* file_path, short* chan
     *frequency = state->vi->rate;
     return state;
 }
-long ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill, const long max_samples_to_read) {
+int32_t ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill, const int32_t max_samples_to_read) {
     /*  pcm is actually an array of floating point arrays, one for each channel of audio.
     If you are decoding stereo, pcm[0] will be the array of left channel samples,
     and pcm[1] will be the right channel.
@@ -126,7 +126,7 @@ long ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill
     } while (samples_actually_read < max_samples_to_read);
     return max_samples_to_read;
 }
-long CloseFileStream(VorbisFileReadStreamState* state) {
+int32_t CloseFileStream(VorbisFileReadStreamState* state) {
     ov_clear(&(state->vf));
     fclose(state->file_stream);
     free(state);
