@@ -16,27 +16,27 @@ typedef struct VorbisFileReadStreamState {
 } VorbisFileReadStreamState;
 
 
-EXPORT_API long WriteAllPcmDataToFile(
+EXPORT_API int32_t WriteAllPcmDataToFile(
     const char* file_path,
     const float* samples,
-    const long samples_length,
-    const short channels,
-    const long frequency,
+    const int32_t samples_length,
+    const int16_t channels,
+    const int32_t frequency,
     const float base_quality,
-    const long samplesToRead);
+    const int32_t samplesToRead);
 
 
-EXPORT_API long ReadAllPcmDataFromFile(
+EXPORT_API int32_t ReadAllPcmDataFromFile(
     const char* file_path,
     float** samples,
-    long* samples_length,
-    short* channels,
-    long* frequency,
-    const long maxSamplesToRead);
-EXPORT_API long FreeSamplesArrayNativeMemory(float** samples);
+    int32_t* samples_length,
+    int16_t* channels,
+    int32_t* frequency,
+    const int32_t maxSamplesToRead);
+EXPORT_API int32_t FreeSamplesArrayNativeMemory(float** samples);
 
-EXPORT_API VorbisFileReadStreamState* OpenReadFileStream(const char* file_path, short* channels, long* frequency);
-EXPORT_API long ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill, const long max_samples_to_read);
-EXPORT_API long CloseFileStream(VorbisFileReadStreamState* state);
+EXPORT_API VorbisFileReadStreamState* OpenReadFileStream(const char* file_path, int16_t* channels, int32_t* frequency);
+EXPORT_API int32_t ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill, const int32_t max_samples_to_read);
+EXPORT_API int32_t CloseFileStream(VorbisFileReadStreamState* state);
 
 #endif // !_VORBIS_PLUGIN_H_

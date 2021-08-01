@@ -9,14 +9,14 @@
 #include "ErrorCodes.h"
 
 
-long EXPORT_API WriteAllPcmDataToFileStream(
+int32_t EXPORT_API WriteAllPcmDataToFileStream(
     FILE* file_stream,
     const float* samples,
-    const long samples_length,
-    const short channels,
-    const long frequency,
+    const int32_t samples_length,
+    const int16_t channels,
+    const int32_t frequency,
     const float base_quality,
-    const long samplesToRead) {
+    const int32_t samplesToRead) {
 
     if (file_stream == NULL) {
         return ERROR_INVALID_FILESTREAM_PARAMETER;
@@ -203,14 +203,14 @@ long EXPORT_API WriteAllPcmDataToFileStream(
     return 0;
 }
 
-long WriteAllPcmDataToFile(
+int32_t WriteAllPcmDataToFile(
     const char* file_path,
     const float* samples,
-    const long samples_length,
-    const short channels,
-    const long frequency,
+    const int32_t samples_length,
+    const int16_t channels,
+    const int32_t frequency,
     const float base_quality,
-    const long samplesToRead) {
+    const int32_t samplesToRead) {
 
     if (file_path == NULL) {
         return ERROR_INVALID_FILEPATH_PARAMETER;
