@@ -90,6 +90,7 @@ By default the build will create Debug libraries. To build Release ones you need
     - **dependency** this folder contain the git submodules for *ogg* and *vorbis* repositories
         - **ogg** ogg repository
         - **vorbis** vorbis repository
+        - **cmake-ios-toolchain** repository with the CMake iOS toolchain file
     - **projects** this folder contain the Android and CMake project
     - **src** this folder contain the source code of the VorbisPlugin and also PluginTest.c file (simple program to test the Save/Load function)
     - **unity** this folder contain the Unity part of the VorbisPlugin (sample project and source C# files)
