@@ -32,14 +32,25 @@ static void TestEncodeToFileDecodeFromFile() {
 static void TestReadFromFileStream() {
     short channels;
     long frequency;
-    VorbisFileReadStreamState* state = OpenReadFileStream("1_plugin_test_out_text.ogg", &channels, &frequency);
+    VorbisFileReadStreamState *state = OpenReadFileStream("1_plugin_test_out_text.ogg", &channels, &frequency);
     assert(1 == channels);
     assert(44100 == frequency);
 
+    long checked_samples = 0;
     while (!state->eof) {
         long maxSamplesToLoad = 1024;
-        float* samples = malloc(sizeof(float)* maxSamplesToLoad);
-        ReadFromFileStream(state, samples, maxSamplesToLoad);
+        float *samples = (float*)malloc(sizeof(float)* maxSamplesToLoad);
+        if (samples == NULL) {
+            assert(0);
+        }
+        int32_t read_samples = ReadFromFileStream(state, samples, maxSamplesToLoad);
+        assert(read_samples <= maxSamplesToLoad);
+        for (int32_t i = 0; i < read_samples; ++i) {
+            float original = testData[checked_samples++];
+            float sample = samples[i];
+            int result = nearlyEqual(original, sample, 0.05);
+            assert(result);
+        }
         free(samples);
     }
     CloseFileStream(state);

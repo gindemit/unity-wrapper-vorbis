@@ -105,7 +105,8 @@ int32_t ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_f
     do
     {
         float** pcm;
-        long ret = ov_read_float(&(state->vf), &pcm, max_samples_to_read, &(state->current_section));
+        long samples_to_ask = max_samples_to_read - samples_actually_read;
+        long ret = ov_read_float(&(state->vf), &pcm, samples_to_ask, &(state->current_section));
         if (ret == 0) {
             /* EOF */
             state->eof = 1;
@@ -123,8 +124,8 @@ int32_t ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_f
             }
         }
         samples_actually_read += ret;
-    } while (samples_actually_read < max_samples_to_read);
-    return max_samples_to_read;
+    } while (samples_actually_read < max_samples_to_read && (!state->eof));
+    return samples_actually_read;
 }
 int32_t CloseFileStream(VorbisFileReadStreamState* state) {
     ov_clear(&(state->vf));
