@@ -33,17 +33,17 @@ static void TestEncodeToFileDecodeFromFile() {
 static void TestReadFromFileStream() {
     short channels;
     long frequency;
-    VorbisFileReadStreamState *state = OpenReadFileStream(OGG_TEST_FILE_NAME, &channels, &frequency);
+    VorbisFileReadStreamState* state = OpenReadFileStream(OGG_TEST_FILE_NAME, &channels, &frequency);
     assert(1 == channels);
     assert(44100 == frequency);
 
     long checked_samples = 0;
+    long maxSamplesToLoad = 1024;
+    float* samples = (float*)malloc(sizeof(float) * maxSamplesToLoad);
+    if (samples == NULL) {
+        assert(0);
+    }
     while (!state->eof) {
-        long maxSamplesToLoad = 1024;
-        float *samples = (float*)malloc(sizeof(float)* maxSamplesToLoad);
-        if (samples == NULL) {
-            assert(0);
-        }
         int32_t read_samples = ReadFromFileStream(state, samples, maxSamplesToLoad);
         assert(read_samples <= maxSamplesToLoad);
         for (int32_t i = 0; i < read_samples; ++i) {
@@ -52,8 +52,8 @@ static void TestReadFromFileStream() {
             int result = nearlyEqual(original, sample, 0.05);
             assert(result);
         }
-        free(samples);
     }
+    free(samples);
     CloseFileStream(state);
     printf("Read From FileStream Success\n");
 }
