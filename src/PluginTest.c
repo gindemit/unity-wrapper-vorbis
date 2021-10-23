@@ -5,6 +5,7 @@
 #include <float.h>
 #include <math.h>
 
+const char* OGG_TEST_FILE_NAME = "1_ogg_plugin_test.ogg";
 
 static int nearlyEqual(float a, float b, float epsilon)
 {
@@ -13,12 +14,12 @@ static int nearlyEqual(float a, float b, float epsilon)
 }
 
 static void TestEncodeToFileDecodeFromFile() {
-    WriteAllPcmDataToFile("1_plugin_test_out_text.ogg", testData, testDataLength, 1, 44100, 0.2, 1024);
+    WriteAllPcmDataToFile(OGG_TEST_FILE_NAME, testData, testDataLength, 1, 44100, 0.2, 1024);
     float* samples;
     long samples_filled_length;
     short channels;
     long frequency;
-    ReadAllPcmDataFromFile("1_plugin_test_out_text.ogg", &samples, &samples_filled_length, &channels, &frequency, 1024);
+    ReadAllPcmDataFromFile(OGG_TEST_FILE_NAME, &samples, &samples_filled_length, &channels, &frequency, 1024);
 
     assert(44101 == samples_filled_length);
     assert(1 == channels);
@@ -32,7 +33,7 @@ static void TestEncodeToFileDecodeFromFile() {
 static void TestReadFromFileStream() {
     short channels;
     long frequency;
-    VorbisFileReadStreamState *state = OpenReadFileStream("1_plugin_test_out_text.ogg", &channels, &frequency);
+    VorbisFileReadStreamState *state = OpenReadFileStream(OGG_TEST_FILE_NAME, &channels, &frequency);
     assert(1 == channels);
     assert(44100 == frequency);
 
