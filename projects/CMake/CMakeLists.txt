@@ -7,6 +7,7 @@ project(VorbisPlugin)
 
 set (OGG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/ogg)
 set (VORBIS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/vorbis)
+set (FMEM_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/fmem)
 set (OGG_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/lib)
 if (VORBIS_IOS)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/VorbisPluginBuild)
@@ -18,10 +19,12 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/ogg_build/include)
 
 add_subdirectory(${OGG_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/ogg_build)
 add_subdirectory(${VORBIS_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build)
+add_subdirectory(${FMEM_LIBRARY} ${CMAKE_CURRENT_BINARY_DIR}/fmem_build)
 
 include_directories (VorbisPlugin 
     $<BUILD_INTERFACE:${OGG_ROOT}/include>
-    $<BUILD_INTERFACE:${VORBIS_ROOT}>/include)
+    $<BUILD_INTERFACE:${VORBIS_ROOT}>/include
+    ${CMAKE_CURRENT_BINARY_DIR}/fmem_build/gen)
 
 set (VORBIS_PLUGIN_LIBRARY_SOURCES 
     ../../src/VorbisPluginEncoder.c
@@ -37,25 +40,29 @@ if (WIN32)
   set(OGG_LIBRARY_NAME ogg.lib)
   set(VORBIS_LIBRARY_NAME vorbis.lib)
   set(VORBIS_FILE_LIBRARY_NAME vorbisfile.lib)
+  set(FMEM_LIBRARY_NAME fmem.lib)
 elseif(VORBIS_OSX)
   set(OGG_LIBRARY_NAME Release/libogg.a)
   set(VORBIS_LIBRARY_NAME Release/libvorbis.a)
   set(VORBIS_FILE_LIBRARY_NAME Release/libvorbisfile.a)
+  set(FMEM_LIBRARY_NAME Release/fmem.a)
   #set_target_properties(VorbisPlugin PROPERTIES BUNDLE TRUE)
   #set_target_properties(VorbisPlugin PROPERTIES SUFFIX ".bundle")
 else()
   set(OGG_LIBRARY_NAME libogg.a)
   set(VORBIS_LIBRARY_NAME libvorbis.a)
   set(VORBIS_FILE_LIBRARY_NAME libvorbisfile.a)
+  set(FMEM_LIBRARY_NAME fmem.a)
 endif()
 
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_FILE_LIBRARY_NAME})
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_LIBRARY_NAME})
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/${OGG_LIBRARY_NAME})
+target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/fmem_build/${FMEM_LIBRARY_NAME})
 
 add_dependencies(vorbisfile vorbis ogg)
 add_dependencies(vorbis ogg)
-add_dependencies(VorbisPlugin vorbisfile vorbis ogg)
+add_dependencies(VorbisPlugin vorbisfile vorbis ogg fmem)
 
 
 #Adding simple test program:
