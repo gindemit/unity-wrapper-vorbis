@@ -25,6 +25,17 @@ EXPORT_API int32_t WriteAllPcmDataToFile(
     const float base_quality,
     const int32_t samplesToRead);
 
+    
+EXPORT_API int32_t WriteAllPcmDataToMemory(
+    char** memory_array,
+    int32_t* memory_array_length,
+    const float* samples,
+    const int32_t samples_length,
+    const int16_t channels,
+    const int32_t frequency,
+    const float base_quality,
+    const int32_t samplesToRead);
+
 
 EXPORT_API int32_t ReadAllPcmDataFromFile(
     const char* file_path,
