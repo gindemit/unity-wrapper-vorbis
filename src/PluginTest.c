@@ -78,6 +78,7 @@ static void test_encode_to_memory()
     }
     fclose(file_stream);
     free(memory_buffer);
+    printf("Write to memory buffer success\n");
 }
 
 int main() {

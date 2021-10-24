@@ -83,14 +83,14 @@ VorbisFileReadStreamState* OpenReadFileStream(const char* file_path, int16_t* ch
         return NULL;
     }
 
-    char** ptr = ov_comment(&(state->vf), -1)->user_comments;
     state->vi = ov_info(&(state->vf), -1);
+    /*char** ptr = ov_comment(&(state->vf), -1)->user_comments;
     while (*ptr) {
         fprintf(stderr, "%s\n", *ptr);
         ++ptr;
-    }
-    fprintf(stderr, "\nBitstream is %d channel, %ldHz\n", state->vi->channels, state->vi->rate);
-    fprintf(stderr, "Encoded by: %s\n\n", ov_comment(&(state->vf), -1)->vendor);
+    }*/
+    //fprintf(stderr, "\nBitstream is %d channel, %ldHz\n", state->vi->channels, state->vi->rate);
+    //fprintf(stderr, "Encoded by: %s\n\n", ov_comment(&(state->vf), -1)->vendor);
     *channels = state->vi->channels;
     *frequency = state->vi->rate;
     return state;
