@@ -13,7 +13,7 @@ static int nearlyEqual(float a, float b, float epsilon)
     return diff < epsilon;
 }
 
-static void TestEncodeToFileDecodeFromFile() {
+static void test_encode_to_file_decode_from_file() {
     WriteAllPcmDataToFile(OGG_TEST_FILE_NAME, test_data, test_data_length, 1, 44100, 0.2, 1024);
     float* samples;
     long samples_filled_length;
@@ -30,7 +30,7 @@ static void TestEncodeToFileDecodeFromFile() {
     }
     printf("Encode Decode Success\n");
 }
-static void TestReadFromFileStream() {
+static void test_read_from_file_stream() {
     short channels;
     long frequency;
     VorbisFileReadStreamState* state = OpenReadFileStream(OGG_TEST_FILE_NAME, &channels, &frequency);
@@ -57,8 +57,31 @@ static void TestReadFromFileStream() {
     CloseFileStream(state);
     printf("Read From FileStream Success\n");
 }
+static void test_encode_to_memory()
+{
+    char* memory_buffer = NULL;
+    int32_t memory_buffer_length = 0;
+    WriteAllPcmDataToMemory(&memory_buffer, &memory_buffer_length, test_data, test_data_length, 1, 44100, 0.2, 1024);
+    assert(memory_buffer != NULL);
+    assert(memory_buffer_length > 0);
+    FILE* file_stream = fopen(OGG_TEST_FILE_NAME, "rb");
+    if (file_stream == NULL) {
+        assert(0);
+    }
+    size_t compared_bytes_count = 0;
+    char buffer[1024];
+    while (!feof(file_stream)) {
+        size_t actually_read = fread(buffer, sizeof(char), 1024, file_stream);
+        for (size_t i = 0; i < actually_read; ++i) {
+            assert(memory_buffer[compared_bytes_count++] == buffer[i]);
+        }
+    }
+    fclose(file_stream);
+    free(memory_buffer);
+}
 
 int main() {
-    TestEncodeToFileDecodeFromFile();
-    TestReadFromFileStream();
+    test_encode_to_file_decode_from_file();
+    test_read_from_file_stream();
+    test_encode_to_memory();
 }
