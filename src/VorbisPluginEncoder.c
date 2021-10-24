@@ -92,7 +92,7 @@ static int32_t write_all_pcm_data_to_file_stream(
 
     /* add a comment */
     vorbis_comment_init(&vc);
-    vorbis_comment_add_tag(&vc, "ENCODER", "encoder_example.c");
+    vorbis_comment_add_tag(&vc, "ENCODER", "Ogg Vorbis Plugin For Unity by Gindemit Konstantin");
 
     /* set up the analysis state and auxiliary encoding storage */
     vorbis_analysis_init(&vd, &vi);
