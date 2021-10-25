@@ -7,13 +7,13 @@ typedef struct {
     size_t size;
 } FloatArray;
 
-void initArray(FloatArray* a, size_t initialSize) {
+void initFloatArray(FloatArray* a, size_t initialSize) {
     a->array = (float*)malloc(initialSize * sizeof(float));
     a->used = 0;
     a->size = initialSize;
 }
 
-void insertArray(FloatArray* a, float element) {
+void insertFloatArray(FloatArray* a, float element) {
     // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
     // Therefore a->used can go up to a->size 
     if (a->used == a->size) {
@@ -24,7 +24,7 @@ void insertArray(FloatArray* a, float element) {
     a->array[a->used++] = element;
 }
 
-void freeArray(FloatArray* a) {
+void freeFloatArray(FloatArray* a) {
     free(a->array);
     a->array = NULL;
     a->used = a->size = 0;
