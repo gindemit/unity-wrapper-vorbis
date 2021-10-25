@@ -57,32 +57,44 @@ static void test_read_from_file_stream() {
     CloseFileStream(state);
     printf("Read From FileStream Success\n");
 }
-static void test_encode_to_memory()
-{
-    char* memory_buffer = NULL;
+static void test_encode_to_memory() {
+    unsigned char *memory_buffer = NULL;
     int32_t memory_buffer_length = 0;
-    WriteAllPcmDataToMemory(&memory_buffer, &memory_buffer_length, test_data, test_data_length, 1, 44100, 0.2, 1024);
+    
+    WriteAllPcmDataToMemory(
+        &memory_buffer,
+        &memory_buffer_length,
+        test_data,
+        test_data_length,
+        1,
+        44100,
+        0.2,
+        1024);
     assert(memory_buffer != NULL);
     assert(memory_buffer_length > 0);
-    FILE* file_stream = fopen(OGG_TEST_FILE_NAME, "rb");
-    if (file_stream == NULL) {
+    FILE* orig_file_stream = fopen(OGG_TEST_FILE_NAME, "rb");
+    if (orig_file_stream == NULL) {
         assert(0);
     }
     size_t compared_bytes_count = 0;
-    char buffer[1024];
-    while (!feof(file_stream)) {
-        size_t actually_read = fread(buffer, sizeof(char), 1024, file_stream);
+    unsigned char buffer[1024];
+    while (!feof(orig_file_stream)) {
+        size_t actually_read = fread(buffer, sizeof(unsigned char), 1024, orig_file_stream);
         for (size_t i = 0; i < actually_read; ++i) {
             assert(memory_buffer[compared_bytes_count++] == buffer[i]);
         }
     }
-    fclose(file_stream);
-    free(memory_buffer);
+    fclose(orig_file_stream);
+    FreeMemoryArrayForWriteAllPcmData(memory_buffer);
     printf("Write to memory buffer success\n");
+}
+static void test_decode_from_memory() {
+    
 }
 
 int main() {
     test_encode_to_file_decode_from_file();
     test_read_from_file_stream();
     test_encode_to_memory();
+    test_decode_from_memory();
 }

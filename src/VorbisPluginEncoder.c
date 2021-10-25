@@ -7,20 +7,25 @@
 
 #include "VorbisPlugin.h"
 #include "ErrorCodes.h"
-#include "fmem.h"
+#include "UnsignedCharArray.h"
 
-static fmem fm;
+#define MEMORY_ARRAY_INITIAL_SIZE 4096
 
 static int32_t write_all_pcm_data_to_file_stream(
-    FILE* file_stream,
-    const float* samples,
+    void (*on_write_callback)(
+        const void* write_to_impl,
+        const unsigned char* buffer,
+        const size_t element_size,
+        const size_t element_count),
+    const void *write_to_impl,
+    const float *samples,
     const int32_t samples_length,
     const int16_t channels,
     const int32_t frequency,
     const float base_quality,
-    const int32_t samplesToRead) {
+    const int32_t samples_to_read) {
 
-    if (file_stream == NULL) {
+    if (on_write_callback == NULL) {
         return ERROR_INVALID_FILESTREAM_PARAMETER;
     }
     if (samples == NULL) {
@@ -98,11 +103,7 @@ static int32_t write_all_pcm_data_to_file_stream(
     vorbis_analysis_init(&vd, &vi);
     vorbis_block_init(&vd, &vb);
 
-    /* set up our packet->stream encoder */
-    /* pick a random serial number; that way we can more likely build
-       chained streams just by concatenation */
-    srand(time(NULL));
-    ogg_stream_init(&os, rand());
+    ogg_stream_init(&os, 0x04030201);
 
     /* Vorbis streams begin with three headers; the initial header (with
        most of the codec setup parameters) which is mandated by the Ogg
@@ -129,8 +130,8 @@ static int32_t write_all_pcm_data_to_file_stream(
             if (result == 0) {
                 break;
             }
-            fwrite(og.header, 1, og.header_len, file_stream);
-            fwrite(og.body, 1, og.body_len, file_stream);
+            on_write_callback(write_to_impl, og.header, 1, og.header_len);
+            on_write_callback(write_to_impl, og.body, 1, og.body_len);
         }
 
     }
@@ -138,7 +139,7 @@ static int32_t write_all_pcm_data_to_file_stream(
     int eos = 0;
     long j = 0;
     while (!eos) {
-        long toRead = samplesToRead;
+        long toRead = samples_to_read;
         if (j + toRead > samples_length) {
             toRead = samples_length - j;
         }
@@ -178,8 +179,8 @@ static int32_t write_all_pcm_data_to_file_stream(
                 while (!eos) {
                     int result = ogg_stream_pageout(&os, &og);
                     if (result == 0)break;
-                    fwrite(og.header, 1, og.header_len, file_stream);
-                    fwrite(og.body, 1, og.body_len, file_stream);
+                    on_write_callback(write_to_impl, og.header, 1, og.header_len);
+                    on_write_callback(write_to_impl, og.body, 1, og.body_len);
 
                     /* this could be set above, but for illustrative purposes, I do
                        it here (to show that vorbis does know where the stream ends) */
@@ -189,7 +190,6 @@ static int32_t write_all_pcm_data_to_file_stream(
             }
         }
     }
-
     /* clean up and exit.  vorbis_info_clear() must be called last */
     ogg_stream_clear(&os);
     vorbis_block_clear(&vb);
@@ -199,6 +199,15 @@ static int32_t write_all_pcm_data_to_file_stream(
     return 0;
 }
 
+static void on_write_to_file_stream(
+    void* file_stream_void,
+    unsigned char* buffer,
+    size_t element_size,
+    size_t element_count) {
+
+    FILE* file_stream = (FILE*)file_stream_void;
+    fwrite(buffer, element_size, element_count, file_stream);
+}
 int32_t WriteAllPcmDataToFile(
     const char* file_path,
     const float* samples,
@@ -206,26 +215,42 @@ int32_t WriteAllPcmDataToFile(
     const int16_t channels,
     const int32_t frequency,
     const float base_quality,
-    const int32_t samplesToRead) {
+    const int32_t samples_to_read) {
 
     if (file_path == NULL) {
         return ERROR_INVALID_FILEPATH_PARAMETER;
     }
     /* Open file stream to write in */
-    FILE* file_stream = fopen(file_path, "wb");
+    FILE *file_stream = fopen(file_path, "wb");
     if (file_stream == NULL) {
         return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
     }
     int32_t result = write_all_pcm_data_to_file_stream(
+        on_write_to_file_stream,
         file_stream,
         samples,
         samples_length,
         channels,
         frequency,
         base_quality,
-        samplesToRead);
+        samples_to_read);
+    fflush(file_stream);
     fclose(file_stream);
     return result;
+}
+static void on_write_to_unsigned_char_array(
+    void* unsigned_char_buffer_void,
+    unsigned char* buffer,
+    size_t element_size,
+    size_t element_count) {
+
+    if (element_size != 1) {
+        return;
+    }
+    UnsignedCharArray* unsigned_char_array = (UnsignedCharArray*)unsigned_char_buffer_void;
+    for (size_t i = 0; i < element_count; ++i) {
+        insertUnsignedCharArray(unsigned_char_array, buffer[i]);
+    }
 }
 int32_t WriteAllPcmDataToMemory(
     char** memory_array,
@@ -235,32 +260,26 @@ int32_t WriteAllPcmDataToMemory(
     const int16_t channels,
     const int32_t frequency,
     const float base_quality,
-    const int32_t samplesToRead) {
+    const int32_t samples_to_read) {
 
-    /* Open file stream to write in */
-    size_t size_of_final_buffer = 0;
-    FILE* file_stream = fmem_open(&fm, "w+");
-    if (file_stream == NULL) {
-        return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
-    }
+    UnsignedCharArray char_array;
+    initUnsignedCharArray(&char_array, MEMORY_ARRAY_INITIAL_SIZE);
     int32_t result = write_all_pcm_data_to_file_stream(
-        file_stream,
+        on_write_to_unsigned_char_array,
+        &char_array,
         samples,
         samples_length,
         channels,
         frequency,
         base_quality,
-        samplesToRead);
-    fseek(file_stream, 0, SEEK_END);
-    size_of_final_buffer = ftell(file_stream);
-    fseek(file_stream, 0, SEEK_SET);
-    char* in_memory_data = malloc(size_of_final_buffer + 1);
-    if (in_memory_data == NULL) {
-        return ERROR_MALLOC_RETURNED_NULL;
-    }
-    fread(in_memory_data, 1, size_of_final_buffer, file_stream);
-    *memory_array = in_memory_data;
-    *memory_array_length = size_of_final_buffer;
-    fclose(file_stream);
+        samples_to_read);
+    *memory_array = char_array.array;
+    *memory_array_length = char_array.used;
     return result;
+}
+int32_t FreeMemoryArrayForWriteAllPcmData(char* memory_array) {
+    if (memory_array == NULL) {
+        return ERROR_BYTES_MEMORY_ARRAY_NULL;
+    }
+    free(memory_array);
 }

@@ -22,7 +22,7 @@ int32_t ReadAllPcmDataFromFile(
     VorbisFileReadStreamState* state = OpenReadFileStream(file_path, channels, frequency);
 
     FloatArray all_pcm;
-    initArray(&all_pcm, state->vi->rate);
+    initFloatArray(&all_pcm, state->vi->rate);
 
     while (!state->eof) {
 
@@ -43,7 +43,7 @@ int32_t ReadAllPcmDataFromFile(
         else {
             for (int j = 0; j < ret; ++j) {
                 for (int i = 0; i < state->vi->channels; ++i) {
-                    insertArray(&all_pcm, pcm[i][j]);
+                    insertFloatArray(&all_pcm, pcm[i][j]);
                 }
             }
         }
