@@ -21,7 +21,7 @@ int32_t ReadAllPcmDataFromFile(
 
     VorbisFileReadStreamState* state = OpenReadFileStream(file_path, channels, frequency);
 
-    Array all_pcm;
+    FloatArray all_pcm;
     initArray(&all_pcm, state->vi->rate);
 
     while (!state->eof) {
@@ -53,6 +53,17 @@ int32_t ReadAllPcmDataFromFile(
 
     CloseFileStream(state);
     return 0;
+}
+EXPORT_API int32_t ReadAllPcmDataFromMemory(
+    const char* memory_array,
+    const int32_t memory_array_length,
+    float** samples,
+    int32_t* samples_length,
+    int16_t* channels,
+    int32_t* frequency,
+    const int32_t maxSamplesToRead) {
+
+
 }
 int32_t EXPORT_API FreeSamplesArrayNativeMemory(float** samples) {
     if (*samples != NULL) {
