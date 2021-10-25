@@ -10,6 +10,3 @@
 [submodule "dependency/cmake-ios-toolchain"]
 	path = dependency/cmake-ios-toolchain
 	url = https://github.com/leetal/ios-cmake.git
-[submodule "dependency/fmem"]
-	path = dependency/fmem
-	url = https://github.com/Snaipe/fmem.git
