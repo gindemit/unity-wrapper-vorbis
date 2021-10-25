@@ -2,29 +2,29 @@
 #define _CHAR_ARRAY_H_
 
 typedef struct {
-    char* array;
+    unsigned char* array;
     size_t used;
     size_t size;
-} CharArray;
+} UnsignedCharArray;
 
-void initArray(CharArray* a, size_t initialSize) {
-    a->array = (char*)malloc(initialSize * sizeof(char));
+void initUnsignedCharArray(UnsignedCharArray* a, size_t initialSize) {
+    a->array = (unsigned char*)malloc(initialSize * sizeof(unsigned char));
     a->used = 0;
     a->size = initialSize;
 }
 
-void insertArray(CharArray* a, char element) {
+void insertUnsignedCharArray(UnsignedCharArray* a, unsigned char element) {
     // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
     // Therefore a->used can go up to a->size 
     if (a->used == a->size) {
         a->size *= 2;
-        char* reallocated = (char*)realloc(a->array, a->size * sizeof(char));
+        unsigned char* reallocated = (unsigned char*)realloc(a->array, a->size * sizeof(unsigned char));
         a->array = reallocated;
     }
     a->array[a->used++] = element;
 }
 
-void freeArray(CharArray* a) {
+void freeUnsignedCharArray(UnsignedCharArray* a) {
     free(a->array);
     a->array = NULL;
     a->used = a->size = 0;
