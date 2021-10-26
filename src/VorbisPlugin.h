@@ -43,12 +43,12 @@ EXPORT_API int32_t ReadAllPcmDataFromFile(
     int32_t *frequency,
     const int32_t max_samples_to_read);
 EXPORT_API int32_t ReadAllPcmDataFromMemory(
-    const char *memory_array,
+    const char* memory_array,
     const int32_t memory_array_length,
-    float **samples,
-    int32_t *samples_length,
-    int16_t *channels,
-    int32_t *frequency,
+    float** samples,
+    int32_t* samples_length,
+    int16_t* channels,
+    int32_t* frequency,
     const int32_t max_samples_to_read);
 EXPORT_API int32_t FreeSamplesArrayNativeMemory(float **samples);
 
