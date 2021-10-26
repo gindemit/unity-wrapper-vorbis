@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +10,6 @@
 #include "FloatArray.h"
 #include "ErrorCodes.h"
 
-extern void _VDBG_dump(void);
 
 int32_t ReadAllPcmDataFromFile(
     const char* file_path,
@@ -54,6 +54,64 @@ int32_t ReadAllPcmDataFromFile(
     CloseFileStream(state);
     return 0;
 }
+
+
+typedef struct ogg_file
+{
+    char* curPtr;
+    char* filePtr;
+    size_t fileSize;
+} ogg_file;
+size_t AR_readOgg(void* dst, size_t size1, size_t size2, void* fh)
+{
+    ogg_file* of = (ogg_file*)fh;
+    size_t len = size1 * size2;
+    if (of->curPtr + len > of->filePtr + of->fileSize)
+    {
+        len = of->filePtr + of->fileSize - of->curPtr;
+    }
+    memcpy(dst, of->curPtr, len);
+    of->curPtr += len;
+    return len;
+}
+
+int AR_seekOgg(void* fh, ogg_int64_t to, int type) {
+    ogg_file* of = (ogg_file*)fh;
+
+    switch (type) {
+    case SEEK_CUR:
+        of->curPtr += to;
+        break;
+    case SEEK_END:
+        of->curPtr = of->filePtr + of->fileSize - to;
+        break;
+    case SEEK_SET:
+        of->curPtr = of->filePtr + to;
+        break;
+    default:
+        return -1;
+    }
+    if (of->curPtr < of->filePtr) {
+        of->curPtr = of->filePtr;
+        return -1;
+    }
+    if (of->curPtr > of->filePtr + of->fileSize) {
+        of->curPtr = of->filePtr + of->fileSize;
+        return -1;
+    }
+    return 0;
+}
+
+int AR_closeOgg(void* fh)
+{
+    return 0;
+}
+
+long AR_tellOgg(void* fh)
+{
+    ogg_file* of = (ogg_file*)fh;
+    return (of->curPtr - of->filePtr);
+}
 EXPORT_API int32_t ReadAllPcmDataFromMemory(
     const char* memory_array,
     const int32_t memory_array_length,
@@ -61,9 +119,57 @@ EXPORT_API int32_t ReadAllPcmDataFromMemory(
     int32_t* samples_length,
     int16_t* channels,
     int32_t* frequency,
-    const int32_t maxSamplesToRead) {
+    const int32_t max_samples_to_read) {
 
+    ov_callbacks callbacks;
+    ogg_file t;
+    t.curPtr = t.filePtr = memory_array;
+    t.fileSize = memory_array_length;
 
+    OggVorbis_File ov;
+    memset(&ov, 0, sizeof(OggVorbis_File));
+
+    callbacks.read_func = AR_readOgg;
+    callbacks.seek_func = AR_seekOgg;
+    callbacks.close_func = AR_closeOgg;
+    callbacks.tell_func = AR_tellOgg;
+
+    int ret = ov_open_callbacks((void*)&t, &ov, NULL, -1, callbacks);
+
+    vorbis_info* vi = ov_info(&ov, -1);
+    assert(vi);
+
+    FloatArray all_pcm;
+    initFloatArray(&all_pcm, max_samples_to_read);
+
+    int current_section;
+    float** pcm;
+    do
+    {
+        long ret_read_float = ov_read_float(&ov, &pcm, max_samples_to_read, &current_section);
+        if (ret_read_float == 0) {
+            break;
+        }
+        else if (ret_read_float < 0) {
+            return ERROR_READING_OGG_STREAM;
+        }
+        else {
+            const int channels = vi->channels;
+            for (int j = 0; j < ret_read_float; ++j) {
+                for (int i = 0; i < channels; ++i) {
+                    insertFloatArray(&all_pcm, pcm[i][j]);
+                }
+            }
+        }
+    } while (1);
+
+    *channels = vi->channels;
+    *frequency = vi->rate;
+    *samples = all_pcm.array;
+    *samples_length = all_pcm.used;
+
+    ov_clear(&ov);
+    return 0;
 }
 int32_t EXPORT_API FreeSamplesArrayNativeMemory(float** samples) {
     if (*samples != NULL) {
