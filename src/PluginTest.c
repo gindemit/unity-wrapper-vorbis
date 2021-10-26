@@ -28,6 +28,7 @@ static void test_encode_to_file_decode_from_file() {
         int result = nearlyEqual(test_data[i], samples[i], 0.05);
         assert(result);
     }
+    FreeSamplesArrayNativeMemory(&samples);
     printf("Encode Decode Success\n");
 }
 static void test_read_from_file_stream() {
@@ -72,7 +73,7 @@ static void test_encode_to_memory() {
         1024);
     assert(memory_buffer != NULL);
     assert(memory_buffer_length > 0);
-    FILE* orig_file_stream = fopen(OGG_TEST_FILE_NAME, "rb");
+    FILE *orig_file_stream = fopen(OGG_TEST_FILE_NAME, "rb");
     if (orig_file_stream == NULL) {
         assert(0);
     }
@@ -89,7 +90,45 @@ static void test_encode_to_memory() {
     printf("Write to memory buffer success\n");
 }
 static void test_decode_from_memory() {
-    
+    unsigned char *memory_buffer = NULL;
+    int32_t memory_buffer_length = 0;
+
+    WriteAllPcmDataToMemory(
+        &memory_buffer,
+        &memory_buffer_length,
+        test_data,
+        test_data_length,
+        1,
+        44100,
+        0.2,
+        1024);
+    assert(memory_buffer != NULL);
+    assert(memory_buffer_length > 0);
+
+    float *samples;
+    long samples_filled_length;
+    short channels;
+    long frequency;
+    ReadAllPcmDataFromMemory(
+        memory_buffer,
+        memory_buffer_length,
+        &samples,
+        &samples_filled_length,
+        &channels,
+        &frequency,
+        4096);
+
+
+    assert(44101 == samples_filled_length);
+    assert(1 == channels);
+    assert(44100 == frequency);
+    for (int i = 0; i < samples_filled_length; ++i) {
+        int result = nearlyEqual(test_data[i], samples[i], 0.05);
+        assert(result);
+    }
+    FreeSamplesArrayNativeMemory(&samples);
+    FreeMemoryArrayForWriteAllPcmData(memory_buffer);
+    printf("Decode From Memory Success\n");
 }
 
 int main() {
