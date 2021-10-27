@@ -11,7 +11,7 @@
 
 #define MEMORY_ARRAY_INITIAL_SIZE 4096
 
-static int32_t write_all_pcm_data_to_file_stream(
+static int32_t write_all_pcm_data_using_on_write_callback(
     void (*on_write_callback)(
         const void* write_to_impl,
         const unsigned char* buffer,
@@ -225,7 +225,7 @@ int32_t WriteAllPcmDataToFile(
     if (file_stream == NULL) {
         return ERROR_CANNOT_OPEN_FILE_FOR_WRITE;
     }
-    int32_t result = write_all_pcm_data_to_file_stream(
+    int32_t result = write_all_pcm_data_using_on_write_callback(
         on_write_to_file_stream,
         file_stream,
         samples,
@@ -264,7 +264,7 @@ int32_t WriteAllPcmDataToMemory(
 
     UnsignedCharArray char_array;
     initUnsignedCharArray(&char_array, MEMORY_ARRAY_INITIAL_SIZE);
-    int32_t result = write_all_pcm_data_to_file_stream(
+    int32_t result = write_all_pcm_data_using_on_write_callback(
         on_write_to_unsigned_char_array,
         &char_array,
         samples,
