@@ -9,6 +9,7 @@
 #include "VorbisPlugin.h"
 #include "FloatArray.h"
 #include "ErrorCodes.h"
+#include "OggFileCallbacks.h"
 
 
 int32_t ReadAllPcmDataFromFile(
@@ -55,64 +56,7 @@ int32_t ReadAllPcmDataFromFile(
     return 0;
 }
 
-
-typedef struct ogg_file
-{
-    char* curPtr;
-    char* filePtr;
-    size_t fileSize;
-} ogg_file;
-size_t AR_readOgg(void* dst, size_t size1, size_t size2, void* fh)
-{
-    ogg_file* of = (ogg_file*)fh;
-    size_t len = size1 * size2;
-    if (of->curPtr + len > of->filePtr + of->fileSize)
-    {
-        len = of->filePtr + of->fileSize - of->curPtr;
-    }
-    memcpy(dst, of->curPtr, len);
-    of->curPtr += len;
-    return len;
-}
-
-int AR_seekOgg(void* fh, ogg_int64_t to, int type) {
-    ogg_file* of = (ogg_file*)fh;
-
-    switch (type) {
-    case SEEK_CUR:
-        of->curPtr += to;
-        break;
-    case SEEK_END:
-        of->curPtr = of->filePtr + of->fileSize - to;
-        break;
-    case SEEK_SET:
-        of->curPtr = of->filePtr + to;
-        break;
-    default:
-        return -1;
-    }
-    if (of->curPtr < of->filePtr) {
-        of->curPtr = of->filePtr;
-        return -1;
-    }
-    if (of->curPtr > of->filePtr + of->fileSize) {
-        of->curPtr = of->filePtr + of->fileSize;
-        return -1;
-    }
-    return 0;
-}
-
-int AR_closeOgg(void* fh)
-{
-    return 0;
-}
-
-long AR_tellOgg(void* fh)
-{
-    ogg_file* of = (ogg_file*)fh;
-    return (of->curPtr - of->filePtr);
-}
-EXPORT_API int32_t ReadAllPcmDataFromMemory(
+int32_t ReadAllPcmDataFromMemory(
     const char* memory_array,
     const int32_t memory_array_length,
     float** samples,
@@ -129,10 +73,10 @@ EXPORT_API int32_t ReadAllPcmDataFromMemory(
     OggVorbis_File ov;
     memset(&ov, 0, sizeof(OggVorbis_File));
 
-    callbacks.read_func = AR_readOgg;
-    callbacks.seek_func = AR_seekOgg;
-    callbacks.close_func = AR_closeOgg;
-    callbacks.tell_func = AR_tellOgg;
+    callbacks.read_func = ogg_file_callback_read_ogg;
+    callbacks.seek_func = ogg_file_callback_seek_ogg;
+    callbacks.close_func = ogg_file_callback_close_ogg;
+    callbacks.tell_func = ogg_file_callback_tell_ogg;
 
     int ret = ov_open_callbacks((void*)&t, &ov, NULL, -1, callbacks);
 
