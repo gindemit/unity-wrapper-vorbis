@@ -12,7 +12,7 @@
 #include "OggFileCallbacks.h"
 
 
-int32_t ReadAllPcmDataFromFile(
+int32_t read_all_pcm_data_from_file(
     const char* file_path,
     float** samples_to_fill,
     int32_t* samples_filled_length,
@@ -20,7 +20,7 @@ int32_t ReadAllPcmDataFromFile(
     int32_t* frequency,
     const int32_t max_samples_to_read) {
 
-    VorbisFileReadStreamState* state = OpenReadFileStream(file_path, channels, frequency);
+    vorbis_file_read_stream_state* state = open_read_file_stream(file_path, channels, frequency);
 
     FloatArray all_pcm;
     initFloatArray(&all_pcm, state->vi->rate);
@@ -52,11 +52,11 @@ int32_t ReadAllPcmDataFromFile(
     *samples_to_fill = all_pcm.array;
     *samples_filled_length = all_pcm.used;
 
-    CloseFileStream(state);
+    close_file_stream(state);
     return 0;
 }
 
-int32_t ReadAllPcmDataFromMemory(
+int32_t read_all_pcm_data_from_memory(
     const char* memory_array,
     const int32_t memory_array_length,
     float** samples,
@@ -115,7 +115,7 @@ int32_t ReadAllPcmDataFromMemory(
     ov_clear(&ov);
     return 0;
 }
-int32_t EXPORT_API FreeSamplesArrayNativeMemory(float** samples) {
+int32_t EXPORT_API free_samples_array_native_memory(float** samples) {
     if (*samples != NULL) {
         free(*samples);
         *samples = NULL;
@@ -123,17 +123,17 @@ int32_t EXPORT_API FreeSamplesArrayNativeMemory(float** samples) {
     return 0;
 }
 
-VorbisFileReadStreamState* OpenReadFileStream(const char* file_path, int16_t* channels, int32_t* frequency) {
+vorbis_file_read_stream_state* open_read_file_stream(const char* file_path, int16_t* channels, int32_t* frequency) {
     if (file_path == NULL) {
         //TODO: add message to logger
         return NULL;
     }
 
-    VorbisFileReadStreamState* state = malloc(sizeof(VorbisFileReadStreamState));
+    vorbis_file_read_stream_state* state = malloc(sizeof(vorbis_file_read_stream_state));
     if (state == NULL) {
         return NULL;
     }
-    memset(state, 0, sizeof(VorbisFileReadStreamState));
+    memset(state, 0, sizeof(vorbis_file_read_stream_state));
     state->file_stream = fopen(file_path, "rb");
     if (state->file_stream == NULL) {
         return NULL;
@@ -156,7 +156,7 @@ VorbisFileReadStreamState* OpenReadFileStream(const char* file_path, int16_t* ch
     *frequency = state->vi->rate;
     return state;
 }
-int32_t ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_fill, const int32_t max_samples_to_read) {
+int32_t read_from_file_stream(vorbis_file_read_stream_state* state, float* samples_to_fill, const int32_t max_samples_to_read) {
     /*  pcm is actually an array of floating point arrays, one for each channel of audio.
     If you are decoding stereo, pcm[0] will be the array of left channel samples,
     and pcm[1] will be the right channel.
@@ -188,7 +188,7 @@ int32_t ReadFromFileStream(VorbisFileReadStreamState* state, float* samples_to_f
     } while (samples_actually_read < max_samples_to_read && (!state->eof));
     return samples_actually_read;
 }
-int32_t CloseFileStream(VorbisFileReadStreamState* state) {
+int32_t close_file_stream(vorbis_file_read_stream_state* state) {
     ov_clear(&(state->vf));
     fclose(state->file_stream);
     free(state);
