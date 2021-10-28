@@ -208,7 +208,7 @@ static void on_write_to_file_stream(
     FILE* file_stream = (FILE*)file_stream_void;
     fwrite(buffer, element_size, element_count, file_stream);
 }
-int32_t WriteAllPcmDataToFile(
+int32_t write_all_pcm_data_to_file(
     const char* file_path,
     const float* samples,
     const int32_t samples_length,
@@ -252,7 +252,7 @@ static void on_write_to_unsigned_char_array(
         insertUnsignedCharArray(unsigned_char_array, buffer[i]);
     }
 }
-int32_t WriteAllPcmDataToMemory(
+int32_t write_all_pcm_data_to_memory(
     char** memory_array,
     int32_t* memory_array_length,
     const float* samples,
@@ -277,7 +277,7 @@ int32_t WriteAllPcmDataToMemory(
     *memory_array_length = char_array.used;
     return result;
 }
-int32_t FreeMemoryArrayForWriteAllPcmData(char* memory_array) {
+int32_t free_memory_array_for_write_all_pcm_data(char* memory_array) {
     if (memory_array == NULL) {
         return ERROR_BYTES_MEMORY_ARRAY_NULL;
     }

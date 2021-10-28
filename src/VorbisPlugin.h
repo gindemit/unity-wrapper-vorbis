@@ -6,16 +6,16 @@
 #include <stdlib.h>
 #include <vorbis/vorbisfile.h>
 
-typedef struct VorbisFileReadStreamState {
+typedef struct vorbis_file_read_stream_state {
     FILE* file_stream;
     OggVorbis_File vf;
     int eof;
     int current_section;
     vorbis_info* vi;
-} VorbisFileReadStreamState;
+} vorbis_file_read_stream_state;
 
 
-EXPORT_API int32_t WriteAllPcmDataToFile(
+EXPORT_API int32_t write_all_pcm_data_to_file(
     const char *file_path,
     const float *samples,
     const int32_t samples_length,
@@ -23,7 +23,7 @@ EXPORT_API int32_t WriteAllPcmDataToFile(
     const int32_t frequency,
     const float base_quality,
     const int32_t samples_to_read);
-EXPORT_API int32_t WriteAllPcmDataToMemory(
+EXPORT_API int32_t write_all_pcm_data_to_memory(
     char **memory_array,
     int32_t *memory_array_length,
     const float* samples,
@@ -32,17 +32,17 @@ EXPORT_API int32_t WriteAllPcmDataToMemory(
     const int32_t frequency,
     const float base_quality,
     const int32_t samples_to_read);
-EXPORT_API int32_t FreeMemoryArrayForWriteAllPcmData(char *memory_array);
+EXPORT_API int32_t free_memory_array_for_write_all_pcm_data(char *memory_array);
 
 
-EXPORT_API int32_t ReadAllPcmDataFromFile(
+EXPORT_API int32_t read_all_pcm_data_from_file(
     const char *file_path,
     float **samples,
     int32_t *samples_length,
     int16_t *channels,
     int32_t *frequency,
     const int32_t max_samples_to_read);
-EXPORT_API int32_t ReadAllPcmDataFromMemory(
+EXPORT_API int32_t read_all_pcm_data_from_memory(
     const char* memory_array,
     const int32_t memory_array_length,
     float** samples,
@@ -50,10 +50,10 @@ EXPORT_API int32_t ReadAllPcmDataFromMemory(
     int16_t* channels,
     int32_t* frequency,
     const int32_t max_samples_to_read);
-EXPORT_API int32_t FreeSamplesArrayNativeMemory(float **samples);
+EXPORT_API int32_t free_samples_array_native_memory(float **samples);
 
-EXPORT_API VorbisFileReadStreamState* OpenReadFileStream(const char *file_path, int16_t *channels, int32_t *frequency);
-EXPORT_API int32_t ReadFromFileStream(VorbisFileReadStreamState *state, float *samples_to_fill, const int32_t max_samples_to_read);
-EXPORT_API int32_t CloseFileStream(VorbisFileReadStreamState *state);
+EXPORT_API vorbis_file_read_stream_state* open_read_file_stream(const char *file_path, int16_t *channels, int32_t *frequency);
+EXPORT_API int32_t read_from_file_stream(vorbis_file_read_stream_state *state, float *samples_to_fill, const int32_t max_samples_to_read);
+EXPORT_API int32_t close_file_stream(vorbis_file_read_stream_state *state);
 
 #endif // !_VORBIS_PLUGIN_H_
