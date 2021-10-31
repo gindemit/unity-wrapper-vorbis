@@ -19,9 +19,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/ogg_build/include)
 add_subdirectory(${OGG_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/ogg_build)
 add_subdirectory(${VORBIS_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build)
 
-include_directories (VorbisPlugin 
-    $<BUILD_INTERFACE:${OGG_ROOT}/include>
-    $<BUILD_INTERFACE:${VORBIS_ROOT}>/include)
+include_directories ($<BUILD_INTERFACE:${OGG_ROOT}/include>)
+include_directories ($<BUILD_INTERFACE:${VORBIS_ROOT}/include>)
 
 set (VORBIS_PLUGIN_LIBRARY_SOURCES 
     ../../src/VorbisPluginEncoder.c
