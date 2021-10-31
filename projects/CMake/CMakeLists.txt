@@ -63,3 +63,31 @@ target_link_libraries(VorbisPluginTest VorbisPlugin)
 if (VORBIS_IOS)
   set_xcode_property(VorbisPluginTest PRODUCT_BUNDLE_IDENTIFIER "com.soulside.app" All)
 endif()
+
+
+add_custom_command(
+    TARGET VorbisPlugin POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<PLATFORM_ID>/${CMAKE_SYSTEM_PROCESSOR}/$<CONFIG>/")
+
+add_custom_command(
+    TARGET VorbisPlugin POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:VorbisPlugin>"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<PLATFORM_ID>/${CMAKE_SYSTEM_PROCESSOR}/$<CONFIG>/$<TARGET_FILE_NAME:VorbisPlugin>")
+
+if (ANDROID)
+add_custom_command(
+    TARGET VorbisPlugin POST_BUILD
+    COMMAND "${ANDROID_TOOLCHAIN_PREFIX}strip" -g -S -d --strip-debug --verbose
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<PLATFORM_ID>/${CMAKE_SYSTEM_PROCESSOR}/$<CONFIG>/$<TARGET_FILE_NAME:VorbisPlugin>"
+    COMMENT "Strip debug symbols done on final binary.")
+endif()
+# Uncomment following lines if you want to copy the pdb files for Debug builds:
+#if (WIN32)
+#add_custom_command(
+#    TARGET VorbisPlugin POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "$<TARGET_PDB_FILE:VorbisPlugin>"
+#        "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<PLATFORM_ID>/${CMAKE_SYSTEM_PROCESSOR}/$<CONFIG>/$<TARGET_PDB_FILE_NAME:VorbisPlugin>")
+#endif()
