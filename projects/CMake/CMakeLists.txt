@@ -94,6 +94,6 @@ if (ANDROID)
 add_custom_command(
     TARGET VorbisPlugin POST_BUILD
     COMMAND "${ANDROID_TOOLCHAIN_PREFIX}strip" -g -S -d --strip-debug --verbose
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<PLATFORM_ID>/${CMAKE_SYSTEM_PROCESSOR}/$<CONFIG>/$<TARGET_FILE_NAME:VorbisPlugin>"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/$<TARGET_FILE_NAME:VorbisPlugin>"
     COMMENT "Strip debug symbols done on final binary.")
 endif()

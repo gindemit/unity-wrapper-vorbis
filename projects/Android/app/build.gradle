@@ -10,11 +10,12 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
-            abiFilters 'armeabi-v7a'
+            abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
         }
         externalNativeBuild {
             cmake {
                 arguments "-DOGG_INCLUDE_DIRS=../../../dependency/ogg/include"
+                arguments "-DVORBIS_INCLUDE_DIRS=../../../dependency/vorbis/include"
             }
         }
     }
