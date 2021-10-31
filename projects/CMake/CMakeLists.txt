@@ -64,10 +64,14 @@ if (VORBIS_IOS)
   set_xcode_property(VorbisPluginTest PRODUCT_BUNDLE_IDENTIFIER "com.soulside.app" All)
 endif()
 
+if (WIN32)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set (VORBIS_PLUGIN_TARGET_ARCHITECTURE x86_64)
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
     set (VORBIS_PLUGIN_TARGET_ARCHITECTURE x86)
+endif()
+else()
+    set (VORBIS_PLUGIN_TARGET_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
 endif()
 add_custom_command(
     TARGET VorbisPlugin POST_BUILD
