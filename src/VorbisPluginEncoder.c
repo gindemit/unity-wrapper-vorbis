@@ -26,7 +26,7 @@ static int32_t write_all_pcm_data_using_on_write_callback(
     const int32_t samples_to_write) {
 
     if (on_write_callback == NULL) {
-        return ERROR_INVALID_FILESTREAM_PARAMETER;
+        return ERROR_INVALID_WRITE_CALLBACK_PARAMETER;
     }
     if (samples == NULL) {
         return ERROR_INVALID_SAMPLES_PARAMETER;
@@ -139,20 +139,20 @@ static int32_t write_all_pcm_data_using_on_write_callback(
     int eos = 0;
     long j = 0;
     while (!eos) {
-        long toRead = samples_to_write;
-        if (j + toRead > samples_length) {
-            toRead = samples_length - j;
+        long to_read = samples_to_write;
+        if (j + to_read > samples_length) {
+            to_read = samples_length - j;
         }
 
-        if (toRead == 0) {
+        if (to_read == 0) {
             vorbis_analysis_wrote(&vd, 0);
         }
         else
         {
-            float** buffer = vorbis_analysis_buffer(&vd, toRead);
+            float** buffer = vorbis_analysis_buffer(&vd, to_read);
 
             long i;
-            for (i = 0; i < toRead; i++) {
+            for (i = 0; i < to_read; i++) {
                 buffer[0][i] = samples[j++];
                 if (channels == 2) {
                     buffer[1][i] = samples[j++];

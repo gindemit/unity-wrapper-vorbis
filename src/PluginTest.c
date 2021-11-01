@@ -34,7 +34,8 @@ static void test_encode_to_file_decode_from_file() {
 static void test_read_from_file_stream() {
     short channels;
     int32_t frequency;
-    vorbis_file_read_stream_state* state = open_read_file_stream(OGG_TEST_FILE_NAME, &channels, &frequency);
+    vorbis_file_read_stream_state* state = NULL;
+    open_read_file_stream(&state, OGG_TEST_FILE_NAME, &channels, &frequency);
     assert(1 == channels);
     assert(44100 == frequency);
 

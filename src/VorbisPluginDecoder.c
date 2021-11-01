@@ -20,7 +20,8 @@ int32_t read_all_pcm_data_from_file(
     int32_t* frequency,
     const int32_t max_samples_to_read) {
 
-    vorbis_file_read_stream_state* state = open_read_file_stream(file_path, channels, frequency);
+    vorbis_file_read_stream_state* state = NULL;
+    open_read_file_stream(&state, file_path, channels, frequency);
 
     FloatArray all_pcm;
     initFloatArray(&all_pcm, state->vi->rate);
@@ -123,38 +124,36 @@ int32_t EXPORT_API free_samples_array_native_memory(float** samples) {
     return 0;
 }
 
-vorbis_file_read_stream_state* open_read_file_stream(const char* file_path, int16_t* channels, int32_t* frequency) {
+int32_t open_read_file_stream(vorbis_file_read_stream_state** state, const char* file_path, int16_t* channels, int32_t* frequency) {
     if (file_path == NULL) {
-        //TODO: add message to logger
-        return NULL;
+        return ERROR_INVALID_FILEPATH_PARAMETER;
     }
 
-    vorbis_file_read_stream_state* state = malloc(sizeof(vorbis_file_read_stream_state));
-    if (state == NULL) {
-        return NULL;
+    vorbis_file_read_stream_state* state_to_return = malloc(sizeof(vorbis_file_read_stream_state));
+    if (state_to_return == NULL) {
+        return ERROR_MALLOC_RETURNED_NULL;
     }
-    memset(state, 0, sizeof(vorbis_file_read_stream_state));
-    state->file_stream = fopen(file_path, "rb");
-    if (state->file_stream == NULL) {
-        return NULL;
-    }
-
-    if (ov_open_callbacks(state->file_stream, &(state->vf), NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
-        fprintf(stderr, "Input does not appear to be an Ogg bitstream.\n");//TODO: use logger callback
-        return NULL;
+    memset(state_to_return, 0, sizeof(vorbis_file_read_stream_state));
+    state_to_return->file_stream = fopen(file_path, "rb");
+    if (state_to_return->file_stream == NULL) {
+        return ERROR_CANNOT_OPEN_FILE_FOR_READ;
     }
 
-    state->vi = ov_info(&(state->vf), -1);
+    if (ov_open_callbacks(state_to_return->file_stream, &(state_to_return->vf), NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
+        return ERROR_INPUT_FILESTREAM_IS_NOT_OGG_STREAM;
+    }
+
+    state_to_return->vi = ov_info(&(state_to_return->vf), -1);
     /*char** ptr = ov_comment(&(state->vf), -1)->user_comments;
     while (*ptr) {
         fprintf(stderr, "%s\n", *ptr);
         ++ptr;
     }*/
-    fprintf(stderr, "\nBitstream is %d channel, %ldHz\n", state->vi->channels, state->vi->rate);
+    fprintf(stderr, "\nBitstream is %d channel, %ldHz\n", state_to_return->vi->channels, state_to_return->vi->rate);
     //fprintf(stderr, "Encoded by: %s\n\n", ov_comment(&(state->vf), -1)->vendor);
-    *channels = state->vi->channels;
-    *frequency = state->vi->rate;
-    return state;
+    *channels = state_to_return->vi->channels;
+    *frequency = state_to_return->vi->rate;
+    *state = state_to_return;
 }
 int32_t read_from_file_stream(vorbis_file_read_stream_state* state, float* samples_to_fill, const int32_t max_samples_to_read) {
     /*  pcm is actually an array of floating point arrays, one for each channel of audio.
