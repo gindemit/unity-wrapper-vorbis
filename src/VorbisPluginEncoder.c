@@ -23,7 +23,7 @@ static int32_t write_all_pcm_data_using_on_write_callback(
     const int16_t channels,
     const int32_t frequency,
     const float base_quality,
-    const int32_t samples_to_read) {
+    const int32_t samples_to_write) {
 
     if (on_write_callback == NULL) {
         return ERROR_INVALID_FILESTREAM_PARAMETER;
@@ -139,7 +139,7 @@ static int32_t write_all_pcm_data_using_on_write_callback(
     int eos = 0;
     long j = 0;
     while (!eos) {
-        long toRead = samples_to_read;
+        long toRead = samples_to_write;
         if (j + toRead > samples_length) {
             toRead = samples_length - j;
         }
@@ -200,10 +200,10 @@ static int32_t write_all_pcm_data_using_on_write_callback(
 }
 
 static void on_write_to_file_stream(
-    void* file_stream_void,
-    unsigned char* buffer,
-    size_t element_size,
-    size_t element_count) {
+    const void* file_stream_void,
+    const unsigned char* buffer,
+    const size_t element_size,
+    const size_t element_count) {
 
     FILE* file_stream = (FILE*)file_stream_void;
     fwrite(buffer, element_size, element_count, file_stream);
@@ -239,10 +239,10 @@ int32_t write_all_pcm_data_to_file(
     return result;
 }
 static void on_write_to_unsigned_char_array(
-    void* unsigned_char_buffer_void,
-    unsigned char* buffer,
-    size_t element_size,
-    size_t element_count) {
+    const void* unsigned_char_buffer_void,
+    const unsigned char* buffer,
+    const size_t element_size,
+    const size_t element_count) {
 
     if (element_size != 1) {
         return;
@@ -282,4 +282,5 @@ int32_t free_memory_array_for_write_all_pcm_data(char* memory_array) {
         return ERROR_BYTES_MEMORY_ARRAY_NULL;
     }
     free(memory_array);
+    return 0;
 }

@@ -14,18 +14,18 @@ static int nearlyEqual(float a, float b, float epsilon)
 }
 
 static void test_encode_to_file_decode_from_file() {
-    write_all_pcm_data_to_file(OGG_TEST_FILE_NAME, test_data, test_data_length, 1, 44100, 0.2, 1024);
+    write_all_pcm_data_to_file(OGG_TEST_FILE_NAME, test_data, test_data_length, 1, 44100, 0.2f, 1024);
     float* samples;
-    long samples_filled_length;
+    int32_t samples_filled_length;
     short channels;
-    long frequency;
+    int32_t frequency;
     read_all_pcm_data_from_file(OGG_TEST_FILE_NAME, &samples, &samples_filled_length, &channels, &frequency, 1024);
 
     assert(44101 == samples_filled_length);
     assert(1 == channels);
     assert(44100 == frequency);
     for (int i = 0; i < samples_filled_length; ++i) {
-        int result = nearlyEqual(test_data[i], samples[i], 0.05);
+        int result = nearlyEqual(test_data[i], samples[i], 0.05f);
         assert(result);
     }
     free_samples_array_native_memory(&samples);
@@ -33,7 +33,7 @@ static void test_encode_to_file_decode_from_file() {
 }
 static void test_read_from_file_stream() {
     short channels;
-    long frequency;
+    int32_t frequency;
     vorbis_file_read_stream_state* state = open_read_file_stream(OGG_TEST_FILE_NAME, &channels, &frequency);
     assert(1 == channels);
     assert(44100 == frequency);
@@ -42,7 +42,7 @@ static void test_read_from_file_stream() {
     long MAX_SAMPLES_TO_LOAD = 1024;
     float* samples = (float*)malloc(sizeof(float) * MAX_SAMPLES_TO_LOAD);
     if (samples == NULL) {
-        assert(0);
+        return;
     }
     while (!state->eof) {
         int32_t read_samples = read_from_file_stream(state, samples, MAX_SAMPLES_TO_LOAD);
@@ -50,7 +50,7 @@ static void test_read_from_file_stream() {
         for (int32_t i = 0; i < read_samples; ++i) {
             float original = test_data[checked_samples++];
             float sample = samples[i];
-            int result = nearlyEqual(original, sample, 0.05);
+            int result = nearlyEqual(original, sample, 0.05f);
             assert(result);
         }
     }
@@ -69,13 +69,13 @@ static void test_encode_to_memory() {
         test_data_length,
         1,
         44100,
-        0.2,
+        0.2f,
         1024);
     assert(memory_buffer != NULL);
     assert(memory_buffer_length > 0);
     FILE *orig_file_stream = fopen(OGG_TEST_FILE_NAME, "rb");
     if (orig_file_stream == NULL) {
-        assert(0);
+        return;
     }
     size_t compared_bytes_count = 0;
     unsigned char buffer[1024];
@@ -100,7 +100,7 @@ static void test_decode_from_memory() {
         test_data_length,
         1,
         44100,
-        0.2,
+        0.2f,
         1024);
     assert(memory_buffer != NULL);
     assert(memory_buffer_length > 0);
@@ -123,7 +123,7 @@ static void test_decode_from_memory() {
     assert(1 == channels);
     assert(44100 == frequency);
     for (int i = 0; i < samples_filled_length; ++i) {
-        int result = nearlyEqual(test_data[i], samples[i], 0.05);
+        int result = nearlyEqual(test_data[i], samples[i], 0.05f);
         assert(result);
     }
     free_samples_array_native_memory(&samples);
