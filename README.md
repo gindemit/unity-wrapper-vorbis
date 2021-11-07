@@ -3,12 +3,44 @@
 This repository contain only C code. [The Unity project](https://github.com/khindemit/unity-project-vorbis) that use this wrapper is added as git submodule.
 The ogg and vorbis projects are added also as submodules. When you checkout this repository you need to initialize and update submudules.
 
-## Following functions are supported:
-- Write all PCM data to ogg file at path
-- Read all ogg data from file to float[] samples array
-- Stream read ogg from file
+# Following functions are supported:
+### 1. Load vorbis ogg from file at runtime:
+```
+string pathToFile = ...;
+UnityEngine.AudioClip audioClip = OggVorbis.VorbisPlugin.Load(pathToFile);
+```
+### 2. Save vorbis ogg to file at runtime:
+```
+string pathToFile = ...;
+UnityEngine.AudioClip audioClip = ...;
+float quality = 0.4f; // optional parameter, values from 0 to 1 (https://xiph.org/vorbis/doc/vorbisenc/overview.html)
+OggVorbis.VorbisPlugin.Save(pathToFile, audioClip, quality);
+```
+### 3. Get vorbis ogg from bytes array at runtime:
+```
+byte[] sourceAudioBytes = ...;
+UnityEngine.AudioClip sourceAudioClip = OggVorbis.VorbisPlugin.ToAudioClip(sourceAudioBytes, "NameOfAudioClip");
+```
+### 4. Serialize vorbis ogg to bytes array at runtime:
+```
+UnityEngine.AudioClip sourceAudioClip = ...;
+float quality = 0.4f; // optional parameter, values from 0 to 1 (https://xiph.org/vorbis/doc/vorbisenc/overview.html)
+byte[] bytes = OggVorbis.VorbisPlugin.GetOggVorbis(sourceAudioClip, quality);
+```
+### 5. There is an C# API to read from file as from stream, but it is not well tested
 
-## Build process:
+# Installation:
+1. Download from [latest releases](https://github.com/khindemit/unity-wrapper-vorbis/releases) the VorbisPlugin_vX.X.X.unitypackage file
+2. In your project in Unity editor click on menu item Assets->Import Package->Custom Package...
+3. If you use [assembly definition files](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html) add the "VorbisPluginImpl" as a reference to your project
+
+# Notes:
+- The **.unitypackage** contains native libraries **build with Release** configuration. For debugging download the *.zip* file with libraries and replace the libraries with debug version for platforms you want to debug.
+- The functions to load/save from/to file and bytes array was tested with Unity runtime tests on Win 10 PC, Mac Book Pro, iPhone 6 and Google Pixel 3a. All IL2CPP builds. If you want to test it yourself, please review readme for [Unity project](https://github.com/khindemit/unity-project-vorbis).
+- If you experience problems, have suggestions to improve the API, or found missing functionality, please submit an issue.
+
+
+## Build process (optional, the releases contain the native libraries):
 
 **Build on Windows for Windows operating system (x64-Debug, x64-Release, x86-Debug, x86-Release)**: 
 
