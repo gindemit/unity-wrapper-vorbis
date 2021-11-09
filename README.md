@@ -1,7 +1,5 @@
 # C wrapper source code for Unity Vorbis plugin
-
-This repository contain only C code. [The Unity project](https://github.com/khindemit/unity-project-vorbis) that use this wrapper is added as git submodule.
-The ogg and vorbis projects are added also as submodules. When you checkout this repository you need to initialize and update submudules.
+Super easy to use and well tested ogg vorbis plugin for Unity! Support for Windows, Mac OSX, Android and iOS.
 
 # Following functions are supported:
 ### 1. Load vorbis ogg from file at runtime:
@@ -38,6 +36,8 @@ byte[] bytes = OggVorbis.VorbisPlugin.GetOggVorbis(sourceAudioClip, quality);
 - The **.unitypackage** contains native libraries **build with Release** configuration. For debugging download the *.zip* file with libraries and replace the libraries with debug version for platforms you want to debug.
 - The functions to load/save from/to file and bytes array was tested with Unity runtime tests on Win 10 PC, Mac Book Pro, iPhone 6 and Google Pixel 3a. All IL2CPP builds. If you want to test it yourself, please review readme for [Unity project](https://github.com/khindemit/unity-project-vorbis).
 - If you experience problems, have suggestions to improve the API, or found missing functionality, please submit an issue.
+- This repository contain only C code. [The Unity project](https://github.com/khindemit/unity-project-vorbis) that use this wrapper is added as git submodule.
+The ogg and vorbis projects are added also as submodules. When you checkout this repository you need to initialize and update submudules.
 
 
 ## Build process (optional, the releases contain the native libraries):
