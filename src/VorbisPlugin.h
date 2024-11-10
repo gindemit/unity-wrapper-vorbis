@@ -56,4 +56,5 @@ EXPORT_API int32_t open_read_file_stream(vorbis_file_read_stream_state **state, 
 EXPORT_API int32_t read_from_file_stream(vorbis_file_read_stream_state *state, float *samples_to_fill, const int32_t max_samples_to_read);
 EXPORT_API int32_t close_file_stream(vorbis_file_read_stream_state *state);
 
+
 #endif // !_VORBIS_PLUGIN_H_
