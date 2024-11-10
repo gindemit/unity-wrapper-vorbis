@@ -5,6 +5,8 @@ cmake_minimum_required (VERSION 3.6)
 
 project(VorbisPlugin)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
 set (OGG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/ogg)
 set (VORBIS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/vorbis)
 set (OGG_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/lib)
