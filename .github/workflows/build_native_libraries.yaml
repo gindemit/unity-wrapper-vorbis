@@ -89,7 +89,7 @@ jobs:
       - name: Build
         run: |
           cd projects/CMake
-          cmake -S . -B ./buildOSX -G Xcode -DVORBIS_OSX=1 -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+          cmake -S . -B ./buildOSX -G Xcode -DVORBIS_OSX=1 -DCMAKE_OSX_ARCHITECTURES="x86_64"
           cmake --build ./buildOSX --config Release
           brew install tree
           tree ../../out
