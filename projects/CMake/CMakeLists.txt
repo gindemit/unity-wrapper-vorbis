@@ -52,7 +52,7 @@ endif()
 
 add_dependencies(vorbisfile vorbis ogg)
 add_dependencies(vorbis ogg)
-add_dependencies(VorbisPlugin vorbisfile vorbis ogg)
+add_dependencies(VorbisPlugin vorbisfile vorbis ogg vorbisenc)
 
 # Add 'm' to link the math library
 target_link_libraries(VorbisPlugin m)
