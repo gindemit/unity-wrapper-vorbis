@@ -54,6 +54,9 @@ add_dependencies(vorbisfile vorbis ogg)
 add_dependencies(vorbis ogg)
 add_dependencies(VorbisPlugin vorbisfile vorbis ogg)
 
+# Add 'm' to link the math library
+target_link_libraries(VorbisPlugin m)
+
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/$<CONFIG>/${VORBIS_FILE_LIBRARY_NAME})
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/$<CONFIG>/${VORBIS_LIBRARY_NAME})
 target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/$<CONFIG>/${OGG_LIBRARY_NAME})
