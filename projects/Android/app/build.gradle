@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    ndkVersion "21.1.6352462"
+    ndkVersion "27.2.12479018"
     defaultConfig {
         applicationId "vorbisplugin.gindemit.com.vorbisplugin"
         minSdkVersion 14
