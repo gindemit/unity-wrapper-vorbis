@@ -127,10 +127,10 @@ jobs:
         with:
           name: VorbisPluginIOSArtifacts
           path: |
-            out/Release/Plugins/iOS/aarch64/libVorbisPlugin.a
-            out/Release/Plugins/iOS/aarch64/libvorbis.a
-            out/Release/Plugins/iOS/aarch64/libvorbisfile.a
-            out/Release/Plugins/iOS/aarch64/libogg.a
+            out/Release/Plugins/iOS/arm64/libVorbisPlugin.a
+            out/Release/Plugins/iOS/arm64/libvorbis.a
+            out/Release/Plugins/iOS/arm64/libvorbisfile.a
+            out/Release/Plugins/iOS/arm64/libogg.a
 
   build_linux:
     runs-on: ubuntu-latest
