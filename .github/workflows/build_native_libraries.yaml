@@ -56,7 +56,7 @@ jobs:
         with:
           api-level: 28
           cmake-version: '3.22.1'
-          ndk-version: '21.1.6352462'
+          ndk-version: '27.2.12479018'
 
       - name: Set execution permissions for gradlew
         run: chmod +x projects/Android/gradlew
