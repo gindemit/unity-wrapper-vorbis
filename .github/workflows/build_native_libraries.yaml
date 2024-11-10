@@ -51,12 +51,29 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
-        with:
-          api-level: 28
-          cmake-version: '3.22.1'
-          ndk-version: '27.2.12479018'
+      # - name: Setup CMake
+      #   uses: jwlawson/actions-setup-cmake@v1.14
+      #   with:
+      #     cmake-version: '3.22.1'
+
+      - name: Install Android SDK Command-line Tools
+        run: |
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+          curl -fo sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+          unzip sdk-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+          mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+      - name: Accept Licenses
+        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+      - name: Install CMake and NDK
+        run: |
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "cmake;3.22.1" "ndk;27.2.12479018"
+        
+      # - name: Set up Android SDK
+      #   uses: android-actions/setup-android@v2
+      #   with:
+      #     api-level: 28
+      #     cmake-version: '3.22.1'
+      #     ndk-version: '27.2.12479018'
 
       - name: Set execution permissions for gradlew
         run: chmod +x projects/Android/gradlew
