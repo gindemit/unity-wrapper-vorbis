@@ -99,7 +99,7 @@ jobs:
         with:
           name: VorbisPluginMacOSArtifacts
           path: |
-            out/Release/Plugins/Darwin/x86_64/libVorbisPlugin.dylib
+            out/Release/Plugins/Darwin/arm64/libVorbisPlugin.dylib
 
   build_ios:
     runs-on: macos-latest
