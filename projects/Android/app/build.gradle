@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+    ndkVersion "21.1.6352462"
     defaultConfig {
         applicationId "vorbisplugin.gindemit.com.vorbisplugin"
         minSdkVersion 14
@@ -27,6 +28,7 @@ android {
     }
     externalNativeBuild {
         cmake {
+            version "3.22.1"
             path '../../CMake/CMakeLists.txt'
         }
     }

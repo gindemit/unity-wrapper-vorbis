@@ -51,10 +51,12 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
-      - name: Setup CMake
-        uses: jwlawson/actions-setup-cmake@v1.14
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
         with:
-          cmake-version: '3.25.2'
+          api-level: 28
+          cmake-version: '3.22.1'
+          ndk-version: '21.1.6352462'
 
       - name: Set execution permissions for gradlew
         run: chmod +x projects/Android/gradlew
@@ -62,7 +64,7 @@ jobs:
       - name: Build Gradle project
         run: |
           cd projects/Android
-          ./gradlew assembleRelease
+          ./gradlew clean assembleRelease
           tree ../../out
 
       - name: Upload artifacts
