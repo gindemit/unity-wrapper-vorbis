@@ -128,6 +128,9 @@ jobs:
           name: VorbisPluginIOSArtifacts
           path: |
             out/Release/Plugins/iOS/aarch64/libVorbisPlugin.a
+            out/Release/Plugins/iOS/aarch64/libvorbis.a
+            out/Release/Plugins/iOS/aarch64/libvorbisfile.a
+            out/Release/Plugins/iOS/aarch64/libogg.a
 
   build_linux:
     runs-on: ubuntu-latest
@@ -205,7 +208,10 @@ jobs:
           cp -f out/Plugins/Android/x86/libVorbisPlugin.so unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Android/x86/libVorbisPlugin.so
           cp -f out/Plugins/Android/x86_64/libVorbisPlugin.so unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Android/x86_64/libVorbisPlugin.so
           cp -f out/Plugins/Darwin/libVorbisPlugin.dylib unity/VorbisUnity/Assets/VorbisPlugin/Plugins/OSX/libVorbisPlugin.dylib
-          cp -f out/Plugins/iOS/libVorbisPlugin.a unity/VorbisUnity/Assets/VorbisPlugin/Plugins/iOS/libVorbisPlugin.a
+          cp -f out/Plugins/iOS/aarch64/libVorbisPlugin.a unity/VorbisUnity/Assets/VorbisPlugin/Plugins/iOS/libVorbisPlugin.a
+          cp -f out/Plugins/iOS/aarch64/libvorbis.a unity/VorbisUnity/Assets/VorbisPlugin/Plugins/iOS/libvorbis.a
+          cp -f out/Plugins/iOS/aarch64/libvorbisfile.a unity/VorbisUnity/Assets/VorbisPlugin/Plugins/iOS/libvorbisfile.a
+          cp -f out/Plugins/iOS/aarch64/libogg.a unity/VorbisUnity/Assets/VorbisPlugin/Plugins/iOS/libogg.a
           cp -f out/Plugins/Linux/libVorbisPlugin.so unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Linux/x86_64/libVorbisPlugin.so
           git add .
           git status

@@ -83,6 +83,8 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
 endif()
 elseif(ANDROID)
     set (VORBIS_PLUGIN_TARGET_ARCHITECTURE ${CMAKE_ANDROID_ARCH_ABI})
+elseif(VORBIS_IOS)
+    set (VORBIS_PLUGIN_TARGET_ARCHITECTURE ${CMAKE_OSX_ARCHITECTURES})
 else()
     set (VORBIS_PLUGIN_TARGET_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
 endif()
@@ -113,4 +115,25 @@ add_custom_command(
     COMMAND "${ANDROID_TOOLCHAIN_PREFIX}strip" -g -S -d --strip-debug --verbose
             "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/$<TARGET_FILE_NAME:VorbisPlugin>"
     COMMENT "Strip debug symbols done on final binary.")
+endif()
+
+if (VORBIS_IOS)
+    add_custom_command(
+        TARGET VorbisPlugin POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/$<CONFIG>/libvorbis.a"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/libvorbis.a"
+        COMMENT "Copied libvorbis.a to out directory")
+    add_custom_command(
+        TARGET VorbisPlugin POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/$<CONFIG>/libvorbisfile.a"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/libvorbisfile.a"
+        COMMENT "Copied libvorbisfile.a to out directory")
+    add_custom_command(
+        TARGET VorbisPlugin POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/ogg_build/$<CONFIG>/libogg.a"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/libogg.a"
+        COMMENT "Copied libogg.a to out directory")
 endif()
