@@ -88,13 +88,13 @@ add_custom_command(
     COMMENT "Copied final library to out directory")
 
 # Uncomment following lines if you want to copy the pdb files for Debug builds:
-if (WIN32)
-add_custom_command(
-    TARGET VorbisPlugin POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "$<TARGET_PDB_FILE:VorbisPlugin>"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/$<TARGET_PDB_FILE_NAME:VorbisPlugin>")
-endif()
+# if (WIN32)
+# add_custom_command(
+#     TARGET VorbisPlugin POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         "$<TARGET_PDB_FILE:VorbisPlugin>"
+#         "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/$<TARGET_PDB_FILE_NAME:VorbisPlugin>")
+# endif()
 # uncomment end
 if (ANDROID)
 add_custom_command(
