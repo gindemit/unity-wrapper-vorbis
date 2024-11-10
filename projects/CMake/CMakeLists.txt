@@ -52,9 +52,11 @@ add_dependencies(vorbisfile vorbis ogg)
 add_dependencies(vorbis ogg)
 add_dependencies(VorbisPlugin vorbisfile vorbis ogg)
 
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_FILE_LIBRARY_NAME})
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_LIBRARY_NAME})
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/${OGG_LIBRARY_NAME})
+target_link_libraries(VorbisPlugin vorbisfile vorbis ogg)
+
+# target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_FILE_LIBRARY_NAME})
+# target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/${VORBIS_LIBRARY_NAME})
+# target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/${OGG_LIBRARY_NAME})
 
 #Adding simple test program:
 add_executable(VorbisPluginTest ../../src/PluginTest.c)
