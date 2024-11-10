@@ -3,14 +3,14 @@ name: Build and Test
 on:
   push:
     branches:
-      - dev
+      - master
     paths:
       - 'dependency/**'
       - 'projects/**'
       - 'src/**'
   pull_request:
     branches:
-      - dev
+      - master
 
 jobs:
   build_windows:
@@ -32,10 +32,10 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: LottiePluginWindowsArtifacts
+          name: VorbisPluginWindowsArtifacts
           path: |
-            out/Release/Plugins/Windows/x86/LottiePlugin.dll
-            out/Release/Plugins/Windows/x86_64/LottiePlugin.dll
+            out/Release/Plugins/Windows/x86/VorbisPlugin.dll
+            out/Release/Plugins/Windows/x86_64/VorbisPlugin.dll
 
   build_android:
     runs-on: ubuntu-latest
@@ -57,26 +57,23 @@ jobs:
           cmake-version: '3.25.2'
 
       - name: Set execution permissions for gradlew
-        run: chmod +x projects/AndroidStudio/gradlew
+        run: chmod +x projects/Android/gradlew
 
       - name: Build Gradle project
         run: |
-          echo $ANDROID_NDK_HOME
-          result=$(find $ANDROID_NDK_HOME -name aarch64-linux-android-strip)
-          echo $result
-          cd projects/AndroidStudio
+          cd projects/Android
           ./gradlew assembleRelease
           tree ../../out
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: LottiePluginAndroidArtifacts
+          name: VorbisPluginAndroidArtifacts
           path: |
-            out/RelWithDebInfo/Plugins/Android/arm64-v8a/libLottiePlugin.so
-            out/RelWithDebInfo/Plugins/Android/armeabi-v7a/libLottiePlugin.so
-            out/RelWithDebInfo/Plugins/Android/x86/libLottiePlugin.so
-            out/RelWithDebInfo/Plugins/Android/x86_64/libLottiePlugin.so
+            out/RelWithDebInfo/Plugins/Android/arm64-v8a/libVorbisPlugin.so
+            out/RelWithDebInfo/Plugins/Android/armeabi-v7a/libVorbisPlugin.so
+            out/RelWithDebInfo/Plugins/Android/x86/libVorbisPlugin.so
+            out/RelWithDebInfo/Plugins/Android/x86_64/libVorbisPlugin.so
 
   build_macos:
     runs-on: macos-latest
@@ -92,17 +89,17 @@ jobs:
       - name: Build
         run: |
           cd projects/CMake
-          cmake -S . -B ./buildOSX -G Xcode -DRLOTTIE_OSX=1 -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
-          cmake --build ./buildOSX --config Release 
+          cmake -S . -B ./buildOSX -G Xcode -DVORBIS_OSX=1 -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+          cmake --build ./buildOSX --config Release
           brew install tree
           tree ../../out
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: LottiePluginMacOSArtifacts
+          name: VorbisPluginMacOSArtifacts
           path: |
-            out/Release/Plugins/Darwin/x86_64/libLottiePlugin.dylib
+            out/Release/Plugins/Darwin/x86_64/libVorbisPlugin.dylib
 
   build_ios:
     runs-on: macos-latest
@@ -118,18 +115,17 @@ jobs:
       - name: Build
         run: |
           cd projects/CMake
-          cmake -S . -B ./buildIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=../../dependency/cmake-ios-toolchain/ios.toolchain.cmake -DPLATFORM=OS64 -DRLOTTIE_IOS=1
-          cmake --build ./buildIOS --config Release --target LottiePlugin
+          cmake -S . -B ./buildIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=../../dependency/cmake-ios-toolchain/ios.toolchain.cmake -DPLATFORM=OS64 -DVORBIS_IOS=1
+          cmake --build ./buildIOS --config Release --target VorbisPlugin
           brew install tree
           tree ../../out
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: LottiePluginIOSArtifacts
+          name: VorbisPluginIOSArtifacts
           path: |
-            out/Release/Plugins/iOS/aarch64/libLottiePlugin.a
-            out/Release/Plugins/iOS/aarch64/librlottie.a
+            out/Release/Plugins/iOS/aarch64/libVorbisPlugin.a
 
   build_linux:
     runs-on: ubuntu-latest
@@ -145,114 +141,19 @@ jobs:
       - name: Build
         run: |
           cd projects/CMake
-          cmake -S . -B ./buildLinux -G "Unix Makefiles" -DRLOTTIE_LINUX=1
+          cmake -S . -B ./buildLinux -G "Unix Makefiles" -DVORBIS_LINUX=1
           cmake --build ./buildLinux --config Release
           tree ../../out
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: LottiePluginLinuxArtifacts
+          name: VorbisPluginLinuxArtifacts
           path: |
-            out/Plugins/Linux/x86_64/libLottiePlugin.so
+            out/Plugins/Linux/x86_64/libVorbisPlugin.so
 
-  build_webgl:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Modify rlottie CMakeLists.txt
-        run: sed -i '/add_subdirectory(example)/d' dependency/rlottie/CMakeLists.txt
-
-      - name: Install Emscripten and Build
-        run: |
-          git clone https://github.com/emscripten-core/emsdk.git
-          cd emsdk
-          ./emsdk install latest
-          ./emsdk activate latest
-          source ./emsdk_env.sh
-          cd ../projects/CMake
-          emcmake cmake -S . -B ./buildWebGL -DRLOTTIE_WEB_ASSEMBLY=1 -DLOTTIE_MODULE=OFF -DBUILD_SHARED_LIBS=OFF
-          emmake cmake --build ./buildWebGL --config Release
-          cd ../..
-          mkdir -p out/Release/Plugins/WebGL
-          emcc -O3 -flto -o out/Release/Plugins/WebGL/LottiePlugin.bc out/Plugins/Emscripten/x86/libLottiePlugin.a out/Plugins/Emscripten/x86/librlottie.a
-          tree out
-  
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: LottiePluginWebGLArtifacts
-          path: |
-            out/Release/Plugins/WebGL/LottiePlugin.bc
-            out/Release/Plugins/WebGL/LottiePlugin.wasm
-            out/Plugins/Emscripten/x86/libLottiePlugin.a
-            out/Plugins/Emscripten/x86/librlottie.a
-
-  # run_tests_and_build_unity_ubuntulatest:
-  #   needs: [build_windows, build_android, build_macos, build_ios, build_linux, build_webgl]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #       with:
-  #         submodules: recursive
-
-  #     - name: Download artifacts
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: LottiePluginLinuxArtifacts
-  #         path: out/Plugins/Linux
-          
-  #     - name: Force replace the native libraries
-  #       run: |
-  #         tree out
-  #         cp -f out/Plugins/Linux/libLottiePlugin.so unity/RLottieUnity/Assets/LottiePlugin/Plugins/Linux/x86_64/libLottiePlugin.so
-  #         tree unity/RLottieUnity/Assets/LottiePlugin/Plugins/Linux
-
-  #     - name: Run Tests in Unity
-  #       uses: game-ci/unity-test-runner@v3
-  #       env:
-  #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  #       with:
-  #         projectPath: unity/RLottieUnity
-  #         githubToken: ${{ secrets.GITHUB_TOKEN }}
-  #         customParameters: -logFile -
-
-  # run_tests_and_build_unity_windows:
-  #   needs: [build_windows, build_android, build_macos, build_ios, build_linux, build_webgl]
-  #   runs-on: windows-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #       with:
-  #         submodules: recursive
-
-  #     - name: Download artifacts
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: LottiePluginWindowsArtifacts
-  #         path: out/Plugins/Windows
-
-  #     - name: Force replace the native libraries
-  #       run: |
-  #         Copy-Item -Force out/Plugins/Windows/x86/LottiePlugin.dll -Destination unity/RLottieUnity/Assets/LottiePlugin/Plugins/Windows/x86/LottiePlugin.dll
-  #         Copy-Item -Force out/Plugins/Windows/x86_64/LottiePlugin.dll -Destination unity/RLottieUnity/Assets/LottiePlugin/Plugins/Windows/x86_64/LottiePlugin.dll
-
-  #     - name: Run Tests in Unity
-  #       uses: game-ci/unity-test-runner@v4
-  #       env:
-  #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  #       with:
-  #         projectPath: unity/RLottieUnity
-  #         githubToken: ${{ secrets.GITHUB_TOKEN }}
-  #         customParameters: -logFile -
-            
   commit_and_push_native_libraries:
-    needs: [build_windows, build_android, build_macos, build_ios, build_linux, build_webgl]
+    needs: [build_windows, build_android, build_macos, build_ios, build_linux]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -264,53 +165,46 @@ jobs:
       - name: Download artifacts windows
         uses: actions/download-artifact@v3
         with:
-          name: LottiePluginWindowsArtifacts
+          name: VorbisPluginWindowsArtifacts
           path: out/Plugins/Windows
 
       - name: Download artifacts android
         uses: actions/download-artifact@v3
         with:
-          name: LottiePluginAndroidArtifacts
+          name: VorbisPluginAndroidArtifacts
           path: out/Plugins/Android
 
       - name: Download artifacts macos
         uses: actions/download-artifact@v3
         with:
-          name: LottiePluginMacOSArtifacts
+          name: VorbisPluginMacOSArtifacts
           path: out/Plugins/Darwin
 
       - name: Download artifacts ios
         uses: actions/download-artifact@v3
         with:
-          name: LottiePluginIOSArtifacts
+          name: VorbisPluginIOSArtifacts
           path: out/Plugins/iOS
 
       - name: Download artifacts linux
         uses: actions/download-artifact@v3
         with:
-          name: LottiePluginLinuxArtifacts
+          name: VorbisPluginLinuxArtifacts
           path: out/Plugins/Linux
-
-      # - name: Download artifacts webgl
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: LottiePluginWebGLArtifacts
-      #     path: out/Plugins/WebGL
 
       - name: Commit and push native libraries
         env:
           MY_SECRET: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          cp -f out/Plugins/Windows/x86/LottiePlugin.dll unity/RLottieUnity/Assets/LottiePlugin/Plugins/Windows/x86/LottiePlugin.dll
-          cp -f out/Plugins/Windows/x86_64/LottiePlugin.dll unity/RLottieUnity/Assets/LottiePlugin/Plugins/Windows/x86_64/LottiePlugin.dll
-          cp -f out/Plugins/Android/arm64-v8a/libLottiePlugin.so unity/RLottieUnity/Assets/LottiePlugin/Plugins/Android/arm64-v8a/libLottiePlugin.so
-          cp -f out/Plugins/Android/armeabi-v7a/libLottiePlugin.so unity/RLottieUnity/Assets/LottiePlugin/Plugins/Android/armeabi-v7a/libLottiePlugin.so
-          cp -f out/Plugins/Android/x86/libLottiePlugin.so unity/RLottieUnity/Assets/LottiePlugin/Plugins/Android/x86/libLottiePlugin.so
-          cp -f out/Plugins/Android/x86_64/libLottiePlugin.so unity/RLottieUnity/Assets/LottiePlugin/Plugins/Android/x86_64/libLottiePlugin.so
-          cp -f out/Plugins/Darwin/libLottiePlugin.dylib unity/RLottieUnity/Assets/LottiePlugin/Plugins/OSX/libLottiePlugin.dylib
-          cp -f out/Plugins/iOS/libLottiePlugin.a unity/RLottieUnity/Assets/LottiePlugin/Plugins/iOS/libLottiePlugin.a
-          cp -f out/Plugins/iOS/librlottie.a unity/RLottieUnity/Assets/LottiePlugin/Plugins/iOS/librlottie.a
-          cp -f out/Plugins/Linux/libLottiePlugin.so unity/RLottieUnity/Assets/LottiePlugin/Plugins/Linux/x86_64/libLottiePlugin.so
+          cp -f out/Plugins/Windows/x86/VorbisPlugin.dll unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Windows/x86/VorbisPlugin.dll
+          cp -f out/Plugins/Windows/x86_64/VorbisPlugin.dll unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Windows/x86_64/VorbisPlugin.dll
+          cp -f out/Plugins/Android/arm64-v8a/libVorbisPlugin.so unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Android/arm64-v8a/libVorbisPlugin.so
+          cp -f out/Plugins/Android/armeabi-v7a/libVorbisPlugin.so unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Android/armeabi-v7a/libVorbisPlugin.so
+          cp -f out/Plugins/Android/x86/libVorbisPlugin.so unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Android/x86/libVorbisPlugin.so
+          cp -f out/Plugins/Android/x86_64/libVorbisPlugin.so unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Android/x86_64/libVorbisPlugin.so
+          cp -f out/Plugins/Darwin/libVorbisPlugin.dylib unity/VorbisUnity/Assets/VorbisPlugin/Plugins/OSX/libVorbisPlugin.dylib
+          cp -f out/Plugins/iOS/libVorbisPlugin.a unity/VorbisUnity/Assets/VorbisPlugin/Plugins/iOS/libVorbisPlugin.a
+          cp -f out/Plugins/Linux/libVorbisPlugin.so unity/VorbisUnity/Assets/VorbisPlugin/Plugins/Linux/x86_64/libVorbisPlugin.so
           git add .
           git status
           git config --global user.email "konstantin.gindemit@gmail.com"
@@ -320,6 +214,5 @@ jobs:
           git tag -a 0.3.0-dev.${{ github.run_number }} -m "New native libraries version: 0.3.0-dev.${{ github.run_number }}"
           git config -l | grep 'http\..*\.extraheader' | cut -d= -f1 | xargs -L1 git config --unset-all
           echo "Trying to push..."
-          git push --set-upstream https://token:$MY_SECRET@github.com/gindemit/unity-rlottie.git
-          git push --tags --set-upstream https://token:$MY_SECRET@github.com/gindemit/unity-rlottie.git
-
+          git push --set-upstream https://token:$MY_SECRET@github.com/gindemit/unity-wrapper-vorbis.git
+          git push --tags --set-upstream https://token:$MY_SECRET@github.com/gindemit/unity-wrapper-vorbis.git
