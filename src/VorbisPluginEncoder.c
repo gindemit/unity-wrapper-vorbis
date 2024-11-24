@@ -37,7 +37,7 @@ static int32_t write_all_pcm_data_using_on_write_callback(
     if (channels != 1 && channels != 2) {
         return ERROR_INVALID_CHANNELS_PARAMETER;
     }
-    if (frequency < 44100 || frequency > 192000) {
+    if (frequency < 8000 || frequency > 192000) {
         return ERROR_INVALID_FREQUENCY_PARAMETER;
     }
     if (base_quality < 0 || base_quality > 1) {
