@@ -4,9 +4,6 @@
 [submodule "dependency/ogg"]
 	path = dependency/ogg
 	url = https://github.com/xiph/ogg.git
-[submodule "unity/unity-project-vorbis"]
-	path = unity/unity-project-vorbis
-	url = https://github.com/khindemit/unity-project-vorbis.git
 [submodule "dependency/cmake-ios-toolchain"]
 	path = dependency/cmake-ios-toolchain
 	url = https://github.com/leetal/ios-cmake.git
