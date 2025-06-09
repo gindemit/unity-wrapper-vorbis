@@ -1,13 +1,4 @@
 # Sources
-*.c     text diff=c
-*.cc    text diff=cpp
-*.cxx   text diff=cpp
-*.cpp   text diff=cpp
-*.c++   text diff=cpp
-*.hpp   text diff=cpp
-*.h     text diff=c
-*.h++   text diff=cpp
-*.hh    text diff=cpp
 
 # Compiled Object files
 *.slo   binary
@@ -31,17 +22,8 @@
 *.out   binary
 *.app   binary
 # Unity
-*.cginc              text
-*.cs                 text diff=csharp
-*.shader             text
 # Unity YAML
-*.mat                merge=unityyamlmerge eol=lf
 *.anim               merge=unityyamlmerge eol=lf
-*.unity              merge=unityyamlmerge eol=lf
-*.prefab             merge=unityyamlmerge eol=lf
-*.asset              merge=unityyamlmerge eol=lf
-*.meta               merge=unityyamlmerge eol=lf
-*.controller         merge=unityyamlmerge eol=lf
 # "physic" for 3D but "physics" for 2D
 *.physicMaterial2D   merge=unityyamlmerge eol=lf
 *.physicMaterial     merge=unityyamlmerge eol=lf
@@ -50,14 +32,10 @@
 # Using Git LFS
 # Add diff=lfs merge=lfs to the binary files
 # Unity LFS
-*.cubemap            binary
-*.unitypackage       binary
 # 3D models
 *.3dm                binary
 *.3ds                binary
 *.blend              binary
-*.c4d                binary
-*.collada            binary
 *.dae                binary
 *.dxf                binary
 *.FBX                binary
@@ -97,7 +75,6 @@
 *.bmp                binary
 *.exr                binary
 *.gif                binary
-*.hdr                binary
 *.iff                binary
 *.jpeg               binary
 *.jpg                binary
@@ -131,45 +108,14 @@
 *.rns               binary
 *.reason            binary
 # Collapse Unity-generated files on GitHub
-*.asset             linguist-generated
-*.mat               linguist-generated
-*.meta              linguist-generated
-*.prefab            linguist-generated
-*.unity             linguist-generated
-*.md filter=lfs diff=lfs merge=lfs -text
-*.gitmodules filter=lfs diff=lfs merge=lfs -text
-*.c filter=lfs diff=lfs merge=lfs -text
-*.gitignore filter=lfs diff=lfs merge=lfs -text
-*.txt filter=lfs diff=lfs merge=lfs -text
-*.cpp filter=lfs diff=lfs merge=lfs -text
-*.h filter=lfs diff=lfs merge=lfs -text
-*.json filter=lfs diff=lfs merge=lfs -text
-*.gradle filter=lfs diff=lfs merge=lfs -text
-*.pro filter=lfs diff=lfs merge=lfs -text
-*.java filter=lfs diff=lfs merge=lfs -text
-*.xml filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text
-*.properties filter=lfs diff=lfs merge=lfs -text
 *.jar filter=lfs diff=lfs merge=lfs -text
 /projects/Android/gradlew filter=lfs diff=lfs merge=lfs -text
-*.bat filter=lfs diff=lfs merge=lfs -text
-/LICENSE filter=lfs diff=lfs merge=lfs -text
-*.yaml filter=lfs diff=lfs merge=lfs -text
-*.meta filter=lfs diff=lfs merge=lfs -text
-*.asmdef filter=lfs diff=lfs merge=lfs -text
-*.cs filter=lfs diff=lfs merge=lfs -text
 *.ogg filter=lfs diff=lfs merge=lfs -text
 *.pdf filter=lfs diff=lfs merge=lfs -text
 *.ttf filter=lfs diff=lfs merge=lfs -text
-*.mat filter=lfs diff=lfs merge=lfs -text
-*.asset filter=lfs diff=lfs merge=lfs -text
-*.shader filter=lfs diff=lfs merge=lfs -text
-*.cginc filter=lfs diff=lfs merge=lfs -text
 *.so filter=lfs diff=lfs merge=lfs -text
 *.dylib filter=lfs diff=lfs merge=lfs -text
 *.dll filter=lfs diff=lfs merge=lfs -text
 *.a filter=lfs diff=lfs merge=lfs -text
-*.prefab filter=lfs diff=lfs merge=lfs -text
 *.mp3 filter=lfs diff=lfs merge=lfs -text
-*.unity filter=lfs diff=lfs merge=lfs -text
-*.lighting filter=lfs diff=lfs merge=lfs -text
