@@ -20,6 +20,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Update dependency cmake versions
+        run: |
+          sed -i 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/ogg/CMakeLists.txt
+          sed -i 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/vorbis/CMakeLists.txt
 
       - name: Build
         run: |
@@ -30,7 +34,7 @@ jobs:
           cmake --build ./build_x86_64 --config Release
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginWindowsArtifacts
           path: |
@@ -45,12 +49,18 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Set up JDK 11
+      - name: Update dependency cmake versions
+        run: |
+          sed -i "s/cmake_minimum_required(VERSION [0-9.]*)/cmake_minimum_required(VERSION 3.5)/" dependency/ogg/CMakeLists.txt
+          sed -i "s/cmake_minimum_required(VERSION [0-9.]*)/cmake_minimum_required(VERSION 3.5)/" dependency/vorbis/CMakeLists.txt
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: '17'
+          distribution: 'temurin'
 
+      - name: Use JDK 17
+        run: echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
       # - name: Setup CMake
       #   uses: jwlawson/actions-setup-cmake@v1.14
       #   with:
@@ -85,7 +95,7 @@ jobs:
           tree ../../out
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginAndroidArtifacts
           path: |
@@ -102,6 +112,10 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Update dependency cmake versions
+        run: |
+          sed -i "s/cmake_minimum_required(VERSION [0-9.]*)/cmake_minimum_required(VERSION 3.5)/" dependency/ogg/CMakeLists.txt
+          sed -i "s/cmake_minimum_required(VERSION [0-9.]*)/cmake_minimum_required(VERSION 3.5)/" dependency/vorbis/CMakeLists.txt
       - name: Install CMake
         run: brew install cmake
 
@@ -114,7 +128,7 @@ jobs:
           tree ../../out
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginMacOSArtifacts
           path: |
@@ -130,6 +144,10 @@ jobs:
 
       - name: Install CMake
         run: brew install cmake
+      - name: Update dependency cmake versions
+        run: |
+          sed -i "s/cmake_minimum_required(VERSION [0-9.]*)/cmake_minimum_required(VERSION 3.5)/" dependency/ogg/CMakeLists.txt
+          sed -i "s/cmake_minimum_required(VERSION [0-9.]*)/cmake_minimum_required(VERSION 3.5)/" dependency/vorbis/CMakeLists.txt
 
       - name: Build
         run: |
@@ -140,7 +158,7 @@ jobs:
           tree ../../out
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginIOSArtifacts
           path: |
@@ -157,6 +175,10 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Update dependency cmake versions
+        run: |
+          sed -i "s/cmake_minimum_required(VERSION [0-9.]*)/cmake_minimum_required(VERSION 3.5)/" dependency/ogg/CMakeLists.txt
+          sed -i "s/cmake_minimum_required(VERSION [0-9.]*)/cmake_minimum_required(VERSION 3.5)/" dependency/vorbis/CMakeLists.txt
       - name: Install CMake
         run: sudo apt-get install cmake
 
@@ -168,7 +190,7 @@ jobs:
           tree ../../out
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginLinuxArtifacts
           path: |
@@ -185,31 +207,31 @@ jobs:
           submodules: recursive
 
       - name: Download artifacts windows
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginWindowsArtifacts
           path: out/Plugins/Windows
 
       - name: Download artifacts android
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginAndroidArtifacts
           path: out/Plugins/Android
 
       - name: Download artifacts macos
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginMacOSArtifacts
           path: out/Plugins/Darwin
 
       - name: Download artifacts ios
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginIOSArtifacts
           path: out/Plugins/iOS
 
       - name: Download artifacts linux
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginLinuxArtifacts
           path: out/Plugins/Linux
