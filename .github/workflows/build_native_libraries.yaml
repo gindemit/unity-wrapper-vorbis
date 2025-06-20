@@ -30,7 +30,7 @@ jobs:
           cmake --build ./build_x86_64 --config Release
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginWindowsArtifacts
           path: |
@@ -85,7 +85,7 @@ jobs:
           tree ../../out
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginAndroidArtifacts
           path: |
@@ -114,7 +114,7 @@ jobs:
           tree ../../out
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginMacOSArtifacts
           path: |
@@ -140,7 +140,7 @@ jobs:
           tree ../../out
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginIOSArtifacts
           path: |
@@ -168,7 +168,7 @@ jobs:
           tree ../../out
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VorbisPluginLinuxArtifacts
           path: |
@@ -185,31 +185,31 @@ jobs:
           submodules: recursive
 
       - name: Download artifacts windows
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginWindowsArtifacts
           path: out/Plugins/Windows
 
       - name: Download artifacts android
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginAndroidArtifacts
           path: out/Plugins/Android
 
       - name: Download artifacts macos
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginMacOSArtifacts
           path: out/Plugins/Darwin
 
       - name: Download artifacts ios
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginIOSArtifacts
           path: out/Plugins/iOS
 
       - name: Download artifacts linux
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: VorbisPluginLinuxArtifacts
           path: out/Plugins/Linux
