@@ -20,6 +20,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Update dependency cmake versions
+        run: |
+          sed -i 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/ogg/CMakeLists.txt
+          sed -i 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/vorbis/CMakeLists.txt
       - name: Build
         run: |
           cd projects/CMake
@@ -42,11 +46,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Update dependency cmake versions
+        run: |
+          sed -i 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/ogg/CMakeLists.txt
+          sed -i 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/vorbis/CMakeLists.txt
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
+      - name: Use JDK 17
+        run: echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v1.14
         with:
@@ -72,6 +82,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Update dependency cmake versions
+        run: |
+          sed -i '' 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/ogg/CMakeLists.txt
+          sed -i '' 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/vorbis/CMakeLists.txt
       - name: Install CMake
         run: brew install cmake
       - name: Build
@@ -93,6 +107,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Update dependency cmake versions
+        run: |
+          sed -i '' 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/ogg/CMakeLists.txt
+          sed -i '' 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/vorbis/CMakeLists.txt
       - name: Install CMake
         run: brew install cmake
       - name: Build
@@ -117,6 +135,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Update dependency cmake versions
+        run: |
+          sed -i 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/ogg/CMakeLists.txt
+          sed -i 's/cmake_minimum_required(VERSION [0-9.]*\)/cmake_minimum_required(VERSION 3.5)/' dependency/vorbis/CMakeLists.txt
       - name: Install CMake
         run: sudo apt-get install cmake
       - name: Build
