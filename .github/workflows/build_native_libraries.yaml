@@ -205,18 +205,16 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install Emscripten 3.1.39
-        run: |
-          git clone https://github.com/emscripten-core/emsdk.git
-          cd emsdk
-          ./emsdk install 3.1.39
-          ./emsdk activate 3.1.39
-          source ./emsdk_env.sh
-          emcc -v || true
+      - name: Set up Emscripten 3.1.39
+        uses: emscripten-core/setup-emscripten@v3
+        with:
+          version: 3.1.39
+
+      - name: Verify Emscripten installation
+        run: emcc -v || true
 
       - name: Build WebGL static libs (.a)
         run: |
-          source emsdk/emsdk_env.sh
           cd projects/CMake
           emcmake cmake -S . -B ./buildWebGL \
             -DVORBIS_WEB_ASSEMBLY=1 \
