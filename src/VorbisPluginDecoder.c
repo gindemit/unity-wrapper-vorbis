@@ -27,7 +27,6 @@ int32_t read_all_pcm_data_from_file(
     initFloatArray(&all_pcm, state->vi->rate);
 
     while (!state->eof) {
-
         /*  pcm is actually an array of floating point arrays, one for each channel of audio.
             If you are decoding stereo, pcm[0] will be the array of left channel samples,
             and pcm[1] will be the right channel.
