@@ -1,140 +1,149 @@
 # CMakeList.txt : CMake project for VorbisPlugin, include source and define
 # project specific logic here.
 
+cmake_minimum_required(VERSION 3.6)
 
-cmake_minimum_required (VERSION 3.6)
+project(VorbisPlugin C)
 
-project(VorbisPlugin)
+option(VORBIS_ANDROID_PAGE_SIZE_16K "Build Android libraries with 16KB page size" OFF)
+option(VORBIS_WEB_ASSEMBLY "Build WebAssembly static libraries" OFF)
 
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(BUILD_SHARED_LIBS FALSE)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-set (OGG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/ogg)
-set (VORBIS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/vorbis)
-set (OGG_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/lib)
-if (VORBIS_IOS)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/VorbisPluginBuild)
-elseif (VORBIS_OSX)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/VorbisPluginBuild)
-endif()
+set(OGG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/ogg)
+set(VORBIS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../dependency/vorbis)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/ogg_build/include)
+if (VORBIS_IOS)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/VorbisPluginBuild)
+elseif (VORBIS_OSX)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/VorbisPluginBuild)
+endif()
 
 add_subdirectory(${OGG_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/ogg_build)
 add_subdirectory(${VORBIS_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build)
 
-include_directories ($<BUILD_INTERFACE:${OGG_ROOT}/include>)
-include_directories ($<BUILD_INTERFACE:${VORBIS_ROOT}/include>)
-
-set (VORBIS_PLUGIN_LIBRARY_SOURCES 
+set(VORBIS_PLUGIN_LIBRARY_SOURCES
     ../../src/VorbisPluginEncoder.c
     ../../src/VorbisPluginDecoder.c)
-    
-if (VORBIS_IOS)
-  add_library (VorbisPlugin STATIC ${VORBIS_PLUGIN_LIBRARY_SOURCES})
+
+if (VORBIS_IOS OR VORBIS_WEB_ASSEMBLY)
+    add_library(VorbisPlugin STATIC ${VORBIS_PLUGIN_LIBRARY_SOURCES})
 else()
-  add_library (VorbisPlugin SHARED ${VORBIS_PLUGIN_LIBRARY_SOURCES})
+    add_library(VorbisPlugin SHARED ${VORBIS_PLUGIN_LIBRARY_SOURCES})
 endif()
 
 if (WIN32)
-  set(OGG_LIBRARY_NAME ogg.lib)
-  set(VORBIS_LIBRARY_NAME vorbis.lib)
-  set(VORBIS_FILE_LIBRARY_NAME vorbisfile.lib)
-  set(VORBIS_ENC_LIBRARY_NAME vorbisenc.lib)
-elseif(VORBIS_OSX)
-  set(OGG_LIBRARY_NAME libogg.a)
-  set(VORBIS_LIBRARY_NAME libvorbis.a)
-  set(VORBIS_FILE_LIBRARY_NAME libvorbisfile.a)
-  set(VORBIS_ENC_LIBRARY_NAME libvorbisenc.a)
-  #set_target_properties(VorbisPlugin PROPERTIES BUNDLE TRUE)
-  #set_target_properties(VorbisPlugin PROPERTIES SUFFIX ".bundle")
-else()
-  set(OGG_LIBRARY_NAME libogg.a)
-  set(VORBIS_LIBRARY_NAME libvorbis.a)
-  set(VORBIS_FILE_LIBRARY_NAME libvorbisfile.a)
-  set(VORBIS_ENC_LIBRARY_NAME libvorbisenc.a)
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
 endif()
 
-add_dependencies(vorbisfile vorbis ogg)
-add_dependencies(vorbis ogg)
-add_dependencies(VorbisPlugin vorbisfile vorbis ogg vorbisenc)
+# Include directories for the plugin sources
+include_directories($<BUILD_INTERFACE:${OGG_ROOT}/include>)
+include_directories($<BUILD_INTERFACE:${VORBIS_ROOT}/include>)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/ogg_build/include)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/include)
+
+set(VORBIS_PLUGIN_DEPENDENCIES vorbisfile vorbis vorbisenc ogg)
+
+if (MSVC)
+    target_compile_options(VorbisPlugin
+        PRIVATE
+            /std:c11
+            /W3
+            /Zc:wchar_t
+            /Zc:inline)
+else()
+    target_compile_options(VorbisPlugin
+        PRIVATE
+            -std=c11
+            -Wall
+            -Wextra
+            -Wno-unused-parameter
+            -fvisibility=hidden)
+endif()
 
 if (VORBIS_LINUX)
-  # Add 'm' to link the math library
-  target_link_libraries(VorbisPlugin m)
+    target_link_libraries(VorbisPlugin PRIVATE m)
 endif()
 
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/$<CONFIG>/${VORBIS_FILE_LIBRARY_NAME})
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/$<CONFIG>/${VORBIS_LIBRARY_NAME})
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/ogg_build/$<CONFIG>/${OGG_LIBRARY_NAME})
-target_link_libraries(VorbisPlugin ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build/lib/$<CONFIG>/${VORBIS_ENC_LIBRARY_NAME})
+target_link_libraries(VorbisPlugin PRIVATE ${VORBIS_PLUGIN_DEPENDENCIES})
 
-
-#Adding simple test program:
-add_executable(VorbisPluginTest ../../src/PluginTest.c)
-target_link_libraries(VorbisPluginTest VorbisPlugin)
-if (VORBIS_IOS)
-  set_xcode_property(VorbisPluginTest PRODUCT_BUNDLE_IDENTIFIER "com.soulside.app" All)
+if (ANDROID AND VORBIS_ANDROID_PAGE_SIZE_16K)
+    foreach(lib_target IN ITEMS VorbisPlugin ${VORBIS_PLUGIN_DEPENDENCIES})
+        if (TARGET ${lib_target})
+            target_link_options(${lib_target} PRIVATE "-Wl,-z,max-page-size=16384" "-Wl,-z,common-page-size=16384")
+        endif()
+    endforeach()
 endif()
 
 if (WIN32)
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set (VORBIS_PLUGIN_TARGET_ARCHITECTURE x86_64)
-elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set (VORBIS_PLUGIN_TARGET_ARCHITECTURE x86)
-endif()
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(VORBIS_PLUGIN_TARGET_ARCHITECTURE x86_64)
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        set(VORBIS_PLUGIN_TARGET_ARCHITECTURE x86)
+    endif()
 elseif(ANDROID)
-    set (VORBIS_PLUGIN_TARGET_ARCHITECTURE ${CMAKE_ANDROID_ARCH_ABI})
-elseif(VORBIS_IOS)
-    set (VORBIS_PLUGIN_TARGET_ARCHITECTURE ${CMAKE_OSX_ARCHITECTURES})
+    set(VORBIS_PLUGIN_TARGET_ARCHITECTURE ${CMAKE_ANDROID_ARCH_ABI})
 else()
-    set (VORBIS_PLUGIN_TARGET_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+    set(VORBIS_PLUGIN_TARGET_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
 endif()
+
+set(VORBIS_PLUGIN_OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}")
+
 add_custom_command(
     TARGET VorbisPlugin POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}")
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${VORBIS_PLUGIN_OUTPUT_DIR}")
 
 add_custom_command(
     TARGET VorbisPlugin POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:VorbisPlugin>"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/$<TARGET_FILE_NAME:VorbisPlugin>"
-    COMMENT "Copied final library to out directory")
+        "${VORBIS_PLUGIN_OUTPUT_DIR}/$<TARGET_FILE_NAME:VorbisPlugin>"
+    COMMENT "Copied VorbisPlugin to out directory")
 
-# Uncomment following lines if you want to copy the pdb files for Debug builds:
-# if (WIN32)
-# add_custom_command(
-#     TARGET VorbisPlugin POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#         "$<TARGET_PDB_FILE:VorbisPlugin>"
-#         "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/$<TARGET_PDB_FILE_NAME:VorbisPlugin>")
-# endif()
-# uncomment end
-if (ANDROID)
-add_custom_command(
-    TARGET VorbisPlugin POST_BUILD
-    COMMAND "${ANDROID_TOOLCHAIN_PREFIX}strip" -g -S -d --strip-debug --verbose
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/$<TARGET_FILE_NAME:VorbisPlugin>"
-    COMMENT "Strip debug symbols done on final binary.")
+foreach(dep IN LISTS VORBIS_PLUGIN_DEPENDENCIES)
+    if (TARGET ${dep})
+        add_custom_command(
+            TARGET VorbisPlugin POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "$<TARGET_FILE:${dep}>"
+                "${VORBIS_PLUGIN_OUTPUT_DIR}/$<TARGET_FILE_NAME:${dep}>"
+            COMMENT "Copied $<TARGET_FILE_NAME:${dep}> to out directory")
+    endif()
+endforeach()
+
+if (VORBIS_WEB_ASSEMBLY)
+    add_custom_command(
+        TARGET VorbisPlugin POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/Plugins/WebGL")
+    foreach(dep IN ITEMS VorbisPlugin ${VORBIS_PLUGIN_DEPENDENCIES})
+        if (TARGET ${dep})
+            add_custom_command(
+                TARGET VorbisPlugin POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:${dep}>"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/../../out/Plugins/WebGL/$<TARGET_FILE_NAME:${dep}>"
+                COMMENT "Copied $<TARGET_FILE_NAME:${dep}> to out/Plugins/WebGL")
+        endif()
+    endforeach()
 endif()
 
-if (VORBIS_IOS)
+if (ANDROID)
     add_custom_command(
         TARGET VorbisPlugin POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_BINARY_DIR}/VorbisPluginBuild/$<CONFIG>/libvorbis.a"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/libvorbis.a"
-        COMMENT "Copied libvorbis.a to out directory")
-    add_custom_command(
-        TARGET VorbisPlugin POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_BINARY_DIR}/VorbisPluginBuild/$<CONFIG>/libvorbisfile.a"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/libvorbisfile.a"
-        COMMENT "Copied libvorbisfile.a to out directory")
-    add_custom_command(
-        TARGET VorbisPlugin POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_BINARY_DIR}/VorbisPluginBuild/$<CONFIG>/libogg.a"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../out/$<CONFIG>/Plugins/$<PLATFORM_ID>/${VORBIS_PLUGIN_TARGET_ARCHITECTURE}/libogg.a"
-        COMMENT "Copied libogg.a to out directory")
+        COMMAND "${ANDROID_TOOLCHAIN_PREFIX}strip" -g -S -d --strip-debug --verbose
+                "${VORBIS_PLUGIN_OUTPUT_DIR}/$<TARGET_FILE_NAME:VorbisPlugin>"
+        COMMENT "Strip debug symbols done on final binary.")
+endif()
+
+if (NOT VORBIS_WEB_ASSEMBLY)
+    add_executable(VorbisPluginTest ../../src/PluginTest.c)
+    target_link_libraries(VorbisPluginTest VorbisPlugin)
+    if (VORBIS_IOS)
+        set_xcode_property(VorbisPluginTest PRODUCT_BUNDLE_IDENTIFIER "com.soulside.app" All)
+    endif()
 endif()
