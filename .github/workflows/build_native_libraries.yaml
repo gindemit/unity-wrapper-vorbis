@@ -69,7 +69,8 @@ jobs:
 
       - name: Install CMake and NDK
         run: |
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "cmake;3.22.1" "ndk;27.2.12479018"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "cmake;3.25.2" "ndk;22.1.7171670"
+          # or "ndk;27.2.12479018" if you kept r27 in build.gradle
 
       - name: Ensure gradlew is executable
         run: chmod +x projects/Android/gradlew
