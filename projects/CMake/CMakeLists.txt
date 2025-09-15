@@ -23,6 +23,13 @@ elseif (VORBIS_OSX)
 endif()
 
 add_subdirectory(${OGG_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/ogg_build)
+
+# Allow the in-tree Vorbis build to reuse the ogg target we just added instead of
+# searching the host system for an installed libogg.
+set(OGG_INCLUDE_DIR  ${OGG_ROOT}/include CACHE PATH "" FORCE)
+set(OGG_INCLUDE_DIRS ${OGG_ROOT}/include CACHE PATH "" FORCE)
+set(OGG_LIBRARIES ogg CACHE STRING "" FORCE)
+
 add_subdirectory(${VORBIS_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/vorbis_build)
 
 set(VORBIS_PLUGIN_LIBRARY_SOURCES
