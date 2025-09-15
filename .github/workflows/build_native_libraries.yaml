@@ -40,10 +40,16 @@ jobs:
   build_android:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout code (with LFS)
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          lfs: true
+
+      - name: Git LFS pull
+        run: |
+          git lfs install
+          git lfs pull
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -59,25 +65,22 @@ jobs:
           mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
 
       - name: Accept Licenses
-        run: yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses
+        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
 
       - name: Install CMake and NDK
         run: |
-          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "cmake;3.22.1" "ndk;27.2.12479018"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "cmake;3.22.1" "ndk;27.2.12479018"
 
-      - name: Set execution permissions for gradlew
+      - name: Ensure gradlew is executable
         run: chmod +x projects/Android/gradlew
 
       - name: Build Gradle project
-        env:
-          ANDROID_NDK_HOME: ${{ env.ANDROID_SDK_ROOT }}/ndk/27.2.12479018
-          ANDROID_NDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}/ndk/27.2.12479018
         run: |
-          sudo apt-get update
-          sudo apt-get install -y tree
+          set -euxo pipefail
           cd projects/Android
-          ./gradlew -PANDROID_16K_PAGE=ON assembleRelease
-          tree ../../out
+          ./gradlew assembleRelease -PVORBIS_ANDROID_PAGE_SIZE_16K=ON
+          cd ../..
+          tree -a out || true
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
