@@ -57,31 +57,22 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install Android SDK Command-line Tools
-        run: |
-          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
-          curl -fo sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip -q sdk-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
-          mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v1.14
+        with:
+          cmake-version: '3.25.2'
 
-      - name: Accept Licenses
-        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-
-      - name: Install CMake and NDK
-        run: |
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "cmake;3.25.2" "ndk;22.1.7171670"
-          # or "ndk;27.2.12479018" if you kept r27 in build.gradle
-
-      - name: Ensure gradlew is executable
-        run: chmod +x projects/Android/gradlew
+      - name: Set execution permissions for gradlew
+        run: chmod +x projects/AndroidStudio/gradlew
 
       - name: Build Gradle project
         run: |
-          set -euxo pipefail
+          echo $ANDROID_NDK_HOME
+          result=$(find $ANDROID_NDK_HOME -name aarch64-linux-android-strip)
+          echo $result
           cd projects/Android
-          ./gradlew assembleRelease -PVORBIS_ANDROID_PAGE_SIZE_16K=ON
-          cd ../..
-          tree -a out || true
+          ./gradlew -PANDROID_16K_PAGE=ON assembleRelease
+          tree ../../out
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
