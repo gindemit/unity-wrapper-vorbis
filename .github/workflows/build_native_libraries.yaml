@@ -63,7 +63,7 @@ jobs:
           cmake-version: '3.25.2'
 
       - name: Set execution permissions for gradlew
-        run: chmod +x projects/AndroidStudio/gradlew
+        run: chmod +x projects/Android/gradlew
 
       - name: Build Gradle project
         run: |
