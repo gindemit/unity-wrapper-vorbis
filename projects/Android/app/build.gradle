@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+def enable16kPages = project.hasProperty('ANDROID_16K_PAGE') &&
+        project.property('ANDROID_16K_PAGE').toString().equalsIgnoreCase('ON')
+
 android {
     compileSdkVersion 28
     ndkVersion "27.2.12479018"
@@ -17,6 +20,9 @@ android {
             cmake {
                 arguments "-DOGG_INCLUDE_DIRS=../../../dependency/ogg/include"
                 arguments "-DVORBIS_INCLUDE_DIRS=../../../dependency/vorbis/include"
+                if (enable16kPages) {
+                    arguments "-DVORBIS_ANDROID_PAGE_SIZE_16K=ON"
+                }
             }
         }
     }
