@@ -5,6 +5,10 @@ cmake_minimum_required(VERSION 3.6)
 
 project(VorbisPlugin C)
 
+if (MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+endif()
+
 option(VORBIS_ANDROID_PAGE_SIZE_16K "Build Android libraries with 16KB page size" OFF)
 option(VORBIS_WEB_ASSEMBLY "Build WebAssembly static libraries" OFF)
 
@@ -42,11 +46,6 @@ else()
     add_library(VorbisPlugin SHARED ${VORBIS_PLUGIN_LIBRARY_SOURCES})
 endif()
 
-if (WIN32)
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
-endif()
-
 # Include directories for the plugin sources
 include_directories($<BUILD_INTERFACE:${OGG_ROOT}/include>)
 include_directories($<BUILD_INTERFACE:${VORBIS_ROOT}/include>)
@@ -73,7 +72,7 @@ else()
 endif()
 
 if (VORBIS_LINUX)
-    target_link_libraries(VorbisPlugin PRIVATE m)
+    target_link_libraries(VorbisPlugin PUBLIC m)
 endif()
 
 target_link_libraries(VorbisPlugin PRIVATE ${VORBIS_PLUGIN_DEPENDENCIES})
@@ -150,6 +149,9 @@ endif()
 if (NOT VORBIS_WEB_ASSEMBLY)
     add_executable(VorbisPluginTest ../../src/PluginTest.c)
     target_link_libraries(VorbisPluginTest VorbisPlugin)
+    if (UNIX AND NOT APPLE)
+        target_link_libraries(VorbisPluginTest m)
+    endif()
     if (VORBIS_IOS)
         set_xcode_property(VorbisPluginTest PRODUCT_BUNDLE_IDENTIFIER "com.soulside.app" All)
     endif()

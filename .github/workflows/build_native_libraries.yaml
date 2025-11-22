@@ -40,10 +40,16 @@ jobs:
   build_android:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout code (with LFS)
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          lfs: true
+
+      - name: Git LFS pull
+        run: |
+          git lfs install
+          git lfs pull
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -51,30 +57,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install Android SDK Command-line Tools
-        run: |
-          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
-          curl -fo sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip -q sdk-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
-          mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-
-      - name: Accept Licenses
-        run: yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses
-
-      - name: Install CMake and NDK
-        run: |
-          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "cmake;3.22.1" "ndk;27.2.12479018"
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v1.14
+        with:
+          cmake-version: '3.25.2'
 
       - name: Set execution permissions for gradlew
         run: chmod +x projects/Android/gradlew
 
       - name: Build Gradle project
-        env:
-          ANDROID_NDK_HOME: ${{ env.ANDROID_SDK_ROOT }}/ndk/27.2.12479018
-          ANDROID_NDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}/ndk/27.2.12479018
         run: |
-          sudo apt-get update
-          sudo apt-get install -y tree
+          echo $ANDROID_NDK_HOME
+          result=$(find $ANDROID_NDK_HOME -name aarch64-linux-android-strip)
+          echo $result
           cd projects/Android
           ./gradlew -PANDROID_16K_PAGE=ON assembleRelease
           tree ../../out

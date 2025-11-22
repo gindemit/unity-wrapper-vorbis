@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <float.h>
 #include <math.h>
+#include <stdint.h>
 
 const char* OGG_TEST_FILE_NAME = "1_ogg_plugin_test.ogg";
 
@@ -107,9 +108,9 @@ static void test_decode_from_memory() {
     assert(memory_buffer_length > 0);
 
     float *samples;
-    long samples_filled_length;
+    int32_t samples_filled_length;
     short channels;
-    long frequency;
+    int32_t frequency;
     read_all_pcm_data_from_memory(
         memory_buffer,
         memory_buffer_length,
