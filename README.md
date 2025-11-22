@@ -31,7 +31,7 @@ To install the Unity Vorbis Plugin using the Unity Package Manager, follow these
 2. Click the `+` button in the top-left corner and select `Add package from git URL...`.
 3. Enter the following URL and click `Add`:
    ```
-   https://github.com/gindemit/unity-wrapper-vorbis.git?path=/unity/unity-project-vorbis/UnityClient/Assets/VorbisPlugin/#0.3.0
+   https://github.com/gindemit/unity-wrapper-vorbis.git?path=/unity/unity-project-vorbis/UnityClient/Assets/VorbisPlugin/#0.3.1
    ```
 
 For more detailed instructions, please visit the [Installation Guide](https://github.com/gindemit/unity-wrapper-vorbis/wiki/Installation-Guide) on the wiki.
