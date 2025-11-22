@@ -302,7 +302,7 @@ jobs:
           set -euxo pipefail
           shopt -s globstar nullglob
 
-          PROJECT_PLUGINS_DIR="unity/unity-project-vorbis/UnityClient/Assets/VorbisPlugin/Plugins"
+          PROJECT_PLUGINS_DIR="unity/Assets/VorbisPlugin/Plugins"
           mkdir -p \
             "$PROJECT_PLUGINS_DIR/Windows/x86" \
             "$PROJECT_PLUGINS_DIR/Windows/x86_64" \
