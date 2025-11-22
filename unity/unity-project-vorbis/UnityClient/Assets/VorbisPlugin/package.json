@@ -1,0 +1,30 @@
+{
+  "name": "com.gindemit.vorbis",
+  "displayName": "Vorbis Plugin",
+  "version": "1.0.0",
+  "unity": "2019.4",
+  "description": "Unity Vorbis plugin for working with OGG Vorbis audio files at runtime",
+  "author": {
+    "name": "Konstantin Gindemit",
+    "email": "konstantin.gindemit@gmail.com",
+    "url": "https://gindemit.com/"
+  },
+  "keywords": [
+    "vorbis",
+    "ogg",
+    "audio",
+    "mobile",
+    "games",
+    "unity",
+    "codec"
+  ],
+  "category": "Unity",
+  "files": [
+    "/package.json",
+    "/package.json.meta",
+    "/Plugins",
+    "/Plugins.meta",
+    "/Impl",
+    "/Impl.meta"
+  ]
+}
