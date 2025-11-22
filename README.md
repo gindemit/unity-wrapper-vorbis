@@ -1,7 +1,7 @@
 # Unity Vorbis Plugin
-![GitHub release](https://img.shields.io/github/release/gindemit/unity-wrapper-vorbis.svg)
+![GitHub release](https://img.shields.io/github/release/gindemit/unity-vorbis.svg)
 ![Unity version](https://img.shields.io/badge/unity-2019.4%2B-green.svg)
-![License](https://img.shields.io/github/license/gindemit/unity-wrapper-vorbis.svg)
+![License](https://img.shields.io/github/license/gindemit/unity-vorbis.svg)
 
 Unity Vorbis plugin is a powerful tool for the Unity game engine that allows you to work with OGG Vorbis audio files. OGG Vorbis is a free, open-source audio coding format that is well-suited for streaming and manipulation in games.
 
@@ -13,7 +13,7 @@ The plugin provides you with the following functionalities:
 4. **Serialize Vorbis OGG to bytes array at runtime**: Allows you to convert AudioClip objects to byte arrays.
 5. **C# API to read from file as from stream**: This is an experimental feature and is not fully tested.
 
-For detailed information about these features, visit the [API Reference](https://github.com/gindemit/unity-wrapper-vorbis/wiki/API-Reference) page on our wiki.
+For detailed information about these features, visit the [API Reference](https://github.com/gindemit/unity-vorbis/wiki/API-Reference) page on our wiki.
 
 ## Supported Platforms
 * Android
@@ -31,10 +31,10 @@ To install the Unity Vorbis Plugin using the Unity Package Manager, follow these
 2. Click the `+` button in the top-left corner and select `Add package from git URL...`.
 3. Enter the following URL and click `Add`:
    ```
-   https://github.com/gindemit/unity-wrapper-vorbis.git?path=/unity/unity-project-vorbis/UnityClient/Assets/VorbisPlugin/#0.3.1
+   https://github.com/gindemit/unity-vorbis.git?path=/unity/unity-project-vorbis/UnityClient/Assets/VorbisPlugin/#0.3.1
    ```
 
-For more detailed instructions, please visit the [Installation Guide](https://github.com/gindemit/unity-wrapper-vorbis/wiki/Installation-Guide) on the wiki.
+For more detailed instructions, please visit the [Installation Guide](https://github.com/gindemit/unity-vorbis/wiki/Installation-Guide) on the wiki.
 
 ## Quick Start
 
@@ -61,13 +61,13 @@ byte[] bytes = OggVorbis.VorbisPlugin.GetOggVorbis(sourceAudioClip, quality);
 ```
 
 ## Usage
-Visit the [Usage Guide](https://github.com/gindemit/unity-wrapper-vorbis/wiki/Usage-Guide) on the wiki for step-by-step instructions on how to use the plugin in your Unity project.
+Visit the [Usage Guide](https://github.com/gindemit/unity-vorbis/wiki/Usage-Guide) on the wiki for step-by-step instructions on how to use the plugin in your Unity project.
 
 ## Building from Source
-If you want to build the plugin from source, we've provided detailed instructions for each supported platform in our [Building from Source](https://github.com/gindemit/unity-wrapper-vorbis/wiki/Building-from-Source) page on the wiki.
+If you want to build the plugin from source, we've provided detailed instructions for each supported platform in our [Building from Source](https://github.com/gindemit/unity-vorbis/wiki/Building-from-Source) page on the wiki.
 
 ## Contributing
-We welcome contributions from the community. To contribute, please read the [Contribution Guidelines](https://github.com/gindemit/unity-wrapper-vorbis/wiki/Contributions) on the wiki.
+We welcome contributions from the community. To contribute, please read the [Contribution Guidelines](https://github.com/gindemit/unity-vorbis/wiki/Contributions) on the wiki.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

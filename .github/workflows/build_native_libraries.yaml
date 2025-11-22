@@ -352,5 +352,5 @@ jobs:
           git tag -a 0.3.0-dev.${{ github.run_number }} -m "New native libraries version: 0.3.0-dev.${{ github.run_number }}"
           git config -l | grep 'http\..*\.extraheader' | cut -d= -f1 | xargs -L1 git config --unset-all
           echo "Trying to push..."
-          git push --set-upstream https://token:$MY_SECRET@github.com/gindemit/unity-wrapper-vorbis.git
-          git push --tags --set-upstream https://token:$MY_SECRET@github.com/gindemit/unity-wrapper-vorbis.git
+          git push --set-upstream https://token:$MY_SECRET@github.com/gindemit/unity-vorbis.git
+          git push --tags --set-upstream https://token:$MY_SECRET@github.com/gindemit/unity-vorbis.git
