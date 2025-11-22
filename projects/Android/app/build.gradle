@@ -2,68 +2,56 @@ plugins {
     id 'com.android.application'
 }
 
-android {
-    namespace "vorbisplugin.gindemit.com.vorbisplugin"
-    compileSdk 33
-    ndkVersion "22.1.7171670" // same as rlottie; or keep 27.2.12479018 if needed
+def enable16kPages = project.hasProperty('ANDROID_16K_PAGE') &&
+        project.property('ANDROID_16K_PAGE').toString().equalsIgnoreCase('ON')
 
+android {
+    namespace 'vorbisplugin.gindemit.com.vorbisplugin'
+    compileSdkVersion 33
+    ndkVersion "27.2.12479018"
     defaultConfig {
         applicationId "vorbisplugin.gindemit.com.vorbisplugin"
-        minSdk 21
-        targetSdk 33
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
         ndk {
             abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
         }
         externalNativeBuild {
             cmake {
-                cppFlags '-std=c11'
-                arguments "-DOGG_INCLUDE_DIRS=../../../dependency/ogg/include",
-                          "-DVORBIS_INCLUDE_DIRS=../../../dependency/vorbis/include"
-                if (project.hasProperty('VORBIS_ANDROID_PAGE_SIZE_16K') &&
-                    project.getProperty('VORBIS_ANDROID_PAGE_SIZE_16K') == 'ON') {
+                arguments "-DOGG_INCLUDE_DIRS=../../../dependency/ogg/include"
+                arguments "-DVORBIS_INCLUDE_DIRS=../../../dependency/vorbis/include"
+                if (enable16kPages) {
                     arguments "-DVORBIS_ANDROID_PAGE_SIZE_16K=ON"
                 }
             }
         }
     }
-
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-
     externalNativeBuild {
         cmake {
-            // use the same version you used for rlottie
-            version '3.25.2'
-            path file('../../CMake/CMakeLists.txt')
+            version "3.22.1"
+            path '../../CMake/CMakeLists.txt'
         }
-    }
-
-    buildFeatures {
-        // no special features required, but you can keep viewBinding if you use it
-        viewBinding true
     }
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.9.0'
-
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
