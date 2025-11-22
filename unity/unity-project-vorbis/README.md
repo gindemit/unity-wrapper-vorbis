@@ -30,16 +30,26 @@ In case you need some specific platform for the plugin, you can build the librar
 Detailed instructions for building the C wrapper native libraries you'll find [here](https://github.com/khindemit/unity-vorbis)
 After you build the C libraries, you need to copy it to Assets/VorbisPlugin/Plugins folder:
 #### Windows:
-- Assets/Plugins/Windows/x86_64/VorbisPlugin.dll
+- Assets/VorbisPlugin/Plugins/Windows/x86/VorbisPlugin.dll
+- Assets/VorbisPlugin/Plugins/Windows/x86_64/VorbisPlugin.dll
 #### Android: 
-- Assets/Plugins/VorbisPlugin/Android/libs/arm64-v8a/libVorbisPlugin.so 
-- Assets/Plugins/VorbisPlugin/Android/libs/armeabi-v7a/libVorbisPlugin.so 
-- Assets/Plugins/VorbisPlugin/Android/libs/x86/libVorbisPlugin.so 
-- Assets/Plugins/VorbisPlugin/Android/libs/x86_64/libVorbisPlugin.so
+- Assets/VorbisPlugin/Plugins/Android/libs/arm64-v8a/libVorbisPlugin.so 
+- Assets/VorbisPlugin/Plugins/Android/libs/armeabi-v7a/libVorbisPlugin.so 
+- Assets/VorbisPlugin/Plugins/Android/libs/x86/libVorbisPlugin.so 
+- Assets/VorbisPlugin/Plugins/Android/libs/x86_64/libVorbisPlugin.so
 #### Mac OSX:
-- Assets/Plugins/VorbisPlugin/OSX/libVorbisPlugin.dylib
-#### iOS
-- Assets/Plugins/VorbisPlugin/iOS/libogg.a
-- Assets/Plugins/VorbisPlugin/iOS/libvorbis.a
-- Assets/Plugins/VorbisPlugin/iOS/libvorbisfile.a
-- Assets/Plugins/VorbisPlugin/iOS/libVorbisPlugin.a
+- Assets/VorbisPlugin/Plugins/OSX/libVorbisPlugin.dylib
+#### Linux:
+- Assets/VorbisPlugin/Plugins/Linux/x86_64/libVorbisPlugin.so
+#### iOS:
+- Assets/VorbisPlugin/Plugins/iOS/libogg.a
+- Assets/VorbisPlugin/Plugins/iOS/libvorbis.a
+- Assets/VorbisPlugin/Plugins/iOS/libvorbisenc.a
+- Assets/VorbisPlugin/Plugins/iOS/libvorbisfile.a
+- Assets/VorbisPlugin/Plugins/iOS/libVorbisPlugin.a
+#### WebGL (not tested):
+- Assets/VorbisPlugin/Plugins/WebGL/libogg.a
+- Assets/VorbisPlugin/Plugins/WebGL/libvorbis.a
+- Assets/VorbisPlugin/Plugins/WebGL/libvorbisenc.a
+- Assets/VorbisPlugin/Plugins/WebGL/libvorbisfile.a
+- Assets/VorbisPlugin/Plugins/WebGL/libVorbisPlugin.a
