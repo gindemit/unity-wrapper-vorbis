@@ -8,7 +8,7 @@ def enable16kPages = project.hasProperty('ANDROID_16K_PAGE') &&
 android {
     namespace 'vorbisplugin.gindemit.com.vorbisplugin'
     compileSdkVersion 33
-    ndkVersion "27.2.12479018"
+    ndkVersion "22.1.7171670"
     defaultConfig {
         applicationId "vorbisplugin.gindemit.com.vorbisplugin"
         minSdkVersion 21
@@ -41,7 +41,7 @@ android {
     }
     externalNativeBuild {
         cmake {
-            version "3.22.1"
+            version '3.25.2'
             path '../../CMake/CMakeLists.txt'
         }
     }
